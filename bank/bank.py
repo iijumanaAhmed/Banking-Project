@@ -10,7 +10,7 @@ class Bank:
     def __init__(self):
         self.customers = []
 
-    def retrive_customers(self):
+    def retrieve_customers(self):
         with open('bank.csv', 'r', newline='') as file:
             reader = csv.reader(file)
             for row in reader:
@@ -18,9 +18,7 @@ class Bank:
 
         return self.customers
 
-    def updated_customers(self, new_customer):
-        self.customers.append(new_customer)
-
+    def update_customers(self):
         with open('bank.csv', 'w', newline='') as file:
             writer = csv.writer(file)
             for data in self.customers:
