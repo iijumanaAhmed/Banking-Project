@@ -1,4 +1,4 @@
-import csv, random
+import csv
 
 # Bank class defs:
 # # init
@@ -9,10 +9,23 @@ import csv, random
 class Bank:
     def __init__(self):
         self.customers = []
-        
 
+    def retrive_customers(self):
+        with open('bank.csv', 'r', newline='') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                self.customers.append(row)
 
-            
+        return self.customers
+
+    def updated_customers(self, new_customer):
+        self.customers.append(new_customer)
+
+        with open('bank.csv', 'w', newline='') as file:
+            writer = csv.writer(file)
+            for data in self.customers:
+                writer.writerow(data)
+
 # Build Overdraft Protection
 
     # def deactivate_customer(self, customer):
