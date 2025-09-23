@@ -69,14 +69,14 @@ def bank_system():
                                 case 2:
                                     operation.withdraw_savings(customer_login.logged_customer_id)
 
-                        # case 2:
-                        #     deposit_operation = int(input('[DEPOSIT OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to deposit into: '))
-                        #     match deposit_operation:
-                        #         case 1:
-                        #             operation.deposit_checking(customer_login.logged_customer_id)
+                        case 2:
+                            deposit_operation = int(input('[DEPOSIT OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to deposit into: '))
+                            match deposit_operation:
+                                case 1:
+                                    operation.deposit_checking(customer_login.logged_customer_id)
 
-                        #         case 2:
-                        #             operation.deposit_savings(customer_login.logged_customer_id)
+                                case 2:
+                                    operation.deposit_savings(customer_login.logged_customer_id)
                         # case 3:
 
                         case 4:
