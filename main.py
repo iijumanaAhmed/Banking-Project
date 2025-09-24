@@ -57,7 +57,7 @@ def bank_system():
                 customer_login = Customer()
                 if customer_login.login_customer() == True:
                     # customer_login.account_transaction()
-                    account_operation = int(input('\n[ACCOUNTS OPERATIONS]\n1) Withdraw\n2) Deposit\n3) Transfer\n4) Logout\nEnter the number of which operation would you want to do, or 4 to logout: '))
+                    account_operation = int(input('\n[ACCOUNTS OPERATIONS]\n1) Withdraw\n2) Deposit\n3) Transfer Between Accounts\n4) Transfer To Another Customer Account\n5) Logout\nEnter the number of which operation would you want to do, or 5 to logout: '))
                     operation = Account()
                     match account_operation:
                         case 1:
@@ -77,9 +77,13 @@ def bank_system():
 
                                 case 2:
                                     operation.deposit_savings(customer_login.logged_customer_id)
-                        # case 3:
-
-                        case 4:
+                        case 3:
+                            transfer_to_account_operation = int(input('\n[TRANSFER BETWEEN ACCOUNTS OPERATIONS]\n1) From checking account to savings account\n2) From savings account to checking account\nEnter the number of which transfer would you like to preform: '))
+                            operation.transfer_between_accounts(customer_login.logged_customer_id, transfer_to_account_operation)
+                        # case 4:
+                        #     transfer_to_customer_account_operation = int(input('\n[TRANSFER TO CUSTOMER ACCOUNT OPERATIONS]\n1) From checking account to other customer account\n2) From savings account to other customer account\nEnter the number of which transfer would you like to preform: '))
+                        #     operation.transfer_to_customer_account(customer_login.logged_customer_id, transfer_to_customer_account_operation)
+                        case 5:
                             print('Back to the main menu')
                             
             case 3:
