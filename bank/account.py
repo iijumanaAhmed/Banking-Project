@@ -82,6 +82,7 @@ class Account():
 
     def deposit_checking(self, customer_id):
         checking_deposit_completed = False
+        checking_deposit = 0
         while True:
             print('[DEPOSIT CHECKING]\n')
             bank_customers = Bank()
@@ -93,21 +94,37 @@ class Account():
                 row_index = 1
                 for row in reader:
                     if customer_id == row[0]:
-                        if bank_customers.customers[row_index][4] != '':
-                            checking_deposit = int(input('Deposit Amount Into Checking: '))
-                            if checking_deposit > 0:
-                                old_checking_balance = int(bank_customers.customers[row_index][4])
-                                bank_customers.customers[row_index][4] = str(old_checking_balance + checking_deposit)
-                                bank_customers.update_customers()
-                                print(f'🔵 | The old checking balance = {old_checking_balance}\n📈 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
-                                checking_deposit_completed = True
-                                break
+                        if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
+                            if bank_customers.customers[row_index][4] != '' and int(bank_customers.customers[row_index][4]) >= 0:
+                                checking_deposit = int(input('Deposit Amount Into Checking: '))
+                                if checking_deposit > 0:
+                                    old_checking_balance = int(bank_customers.customers[row_index][4])
+                                    bank_customers.customers[row_index][4] = str(old_checking_balance + checking_deposit)
+                                    bank_customers.update_customers()
+                                    print(f'🔵 | The old checking balance = {old_checking_balance}\n📈 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
+                                    checking_deposit_completed = True
+                                    break
+                                
+                                else:
+                                    # raise error
+                                    print(f'Can\'t deposit {checking_deposit} into the checking account')
                             
+                            elif int(bank_customers.customers[row_index][4]) < 0:
+                                bank_customers.overdraft_protection_fee(customer_id, checking_deposit)                                                            
+                                break
                             else:
-                                # raise error
-                                print(f'Can\'t deposit {checking_deposit} into the checking account')
+                                print(f'the customer with id: {customer_id} don\'t have a checking account')
                         else:
-                            print(f'the customer with id: {customer_id} don\'t have a checking account')
+                            print(f'the customer accounts with id: {customer_id} are deactive for now.....')
+                            reactivate = input('Do you want to activate the accounts (yes/no): ').lower()
+                            match reactivate:
+                                case 'yes':
+                                    charge_amount = input('Charge amount: ')
+                                    bank_customers.activate_customer(customer_id, charge_amount)
+                                    return
+                                case 'no':
+                                    return
+
                     row_index += 1
                     
             if checking_deposit_completed:
@@ -320,8 +337,8 @@ class Account():
                                         if customer_id == row[0]:
                                             if bank_customers.customers[row_index][4] != '' and bank_customers.customers[other_customer_row_index][4] != '':
 
-                                                transfer_amount = int(input('Transfer Amount From Checking To Customer\'s Account: '))
-                                                if int(bank_customers.customers[row_index][4]) > 0:
+                                                if int(bank_customers.customers[row_index][4]) >= 0:
+                                                    transfer_amount = int(input('Transfer Amount From Checking To Customer\'s Account: '))
 
                                                     if transfer_amount > 0 and transfer_amount <= int(bank_customers.customers[row_index][4]):
                                                         old_checking_balance = int(bank_customers.customers[row_index][4])
@@ -341,8 +358,18 @@ class Account():
                                                         break
                                                 
                                                 else:
-                                                    print(f'Can\'t transfer {transfer_amount} from checking to savings account as the account balance is {bank_customers.customers[row_index][4]}')
-                                                    # apply the overdraft fee here (call the method after creation)
+                                                    while True:
+                                                        transfer_amount = int(input('Transfer Amount From Checking To Customer\'s Account: '))
+                                                        if transfer_amount > 100:
+                                                            print(f'You are not allowed to transfer {transfer_amount} as it above 100')
+                                                        elif transfer_amount <= 100 and transfer_amount > 0:
+                                                            print(f'Can\'t transfer {transfer_amount} from checking to savings account as the account balance is {bank_customers.customers[row_index][4]}')
+                                                            # apply the overdraft fee here (call the method after creation)
+                                                            bank_customers.overdraft_protection_fee(customer_id, transfer_amount)                                                            
+                                                            break
+                                                        else:
+                                                            print('can not enter a -ve amount')
+
                                                     break
                                             
                                             elif bank_customers.customers[row_index][4] == '':
