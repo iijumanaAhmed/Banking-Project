@@ -9,7 +9,7 @@ def bank_system():
     bank_customers.retrieve_customers() 
 
     while True:
-        customer_action = int(input('🏦 | Welcome to the Bank Management System.\n\n1) Register\n2) Login \n3) Exit\nPlease enter the number of the action you want to preform: '))
+        customer_action = int(input('\n🏦 | Welcome to the Bank Management System.\n\n1) Register\n2) Login \n3) Exit\nPlease enter the number of the action you want to preform: '))
         match customer_action:
             case 1:
                 id_unique = False
@@ -28,53 +28,50 @@ def bank_system():
                         customer_id = random_id
                         print(f'New customer ID: {customer_id}')
                         break
-
+                
+                create_account = Account()
                 customer_fname = input('First name: ')
                 customer_lname = input('Last name: ')
                 customer_password = input('Password: ')
 
                 # George's comments: change to be none -> the customer has no account!!, 0 -> the account balance = 0
-                checking_account = None
-                savings_account = None
+                checking_balance = None
+                savings_balance = None
                 customer_accounts = int(input('\n[ACCOUNTS CREATION]\n1) Checking account\n2) Savings account\n3) Checking and Savings accounts\nEnter the number of which account type would you want to create: '))
                 match customer_accounts:
                     case 1:
-                        checking_account = int(input('Enter the intial checking balance: '))
+                        checking_balance = create_account.create_checking_account()
                     case 2:
-                        savings_account = int(input('Enter the intial savings balance: '))
+                        savings_balance = create_account.create_savings_account()
                     case 3:
-                        checking_account = int(input('Enter the intial checking balance: '))
-                        savings_account = int(input('Enter the intial savings balance: '))
+                        checking_balance = create_account.create_checking_account()
+                        savings_balance = create_account.create_savings_account()
 
                 account_status = 'active'
 
                 # Add new customer
                 new_customer = Customer()
-                new_customer_list = [customer_id, customer_fname, customer_lname, customer_password, checking_account, savings_account, account_status] 
+                new_customer_list = [customer_id, customer_fname, customer_lname, customer_password, checking_balance, savings_balance, account_status] 
                 new_customer.add_customer(new_customer_list)
 
             case 2:
                 customer_login = Customer()
                 if customer_login.login_customer() == True:
-                    # customer_login.account_transaction()
                     account_operation = int(input('\n[ACCOUNTS OPERATIONS]\n1) Withdraw\n2) Deposit\n3) Transfer Between Accounts\n4) Transfer To Another Customer Account\n5) Logout\nEnter the number of which operation would you want to do, or 5 to logout: '))
                     operation = Account()
                     match account_operation:
                         case 1:
-                            withdraw_operation = int(input('[WITHDRAW OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to withdraw from: '))
-                            match withdraw_operation:
-                                case 1:
-                                    operation.withdraw_checking(customer_login.logged_customer_id)
-
-                                case 2:
-                                    operation.withdraw_savings(customer_login.logged_customer_id)
-
+                            withdraw_operation = int(input('\n[WITHDRAW OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\nEnter the number of which account would you like to withdraw from, or 0 to go back: '))
+                            if withdraw_operation > 0 and withdraw_operation <= 2:
+                                operation.withdraw_operation(customer_login.logged_customer_id, withdraw_operation)
+                            else:
+                                # need to be fixed [go back logic]
+                                print('enter valid operation number')                                
                         case 2:
-                            deposit_operation = int(input('[DEPOSIT OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to deposit into: '))
+                            deposit_operation = int(input('\n[DEPOSIT OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to deposit into: '))
                             match deposit_operation:
                                 case 1:
                                     operation.deposit_checking(customer_login.logged_customer_id)
-
                                 case 2:
                                     operation.deposit_savings(customer_login.logged_customer_id)
                         case 3:
@@ -85,7 +82,7 @@ def bank_system():
                             operation.transfer_to_customer_account(customer_login.logged_customer_id, transfer_to_customer_account_operation)
                         case 5:
                             print('Back to the main menu')
-                            
+                        
             case 3:
                 print('See you later 💵')
                 return

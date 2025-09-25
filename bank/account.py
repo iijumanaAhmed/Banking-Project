@@ -1,79 +1,168 @@
-# Account class defs:
-# # init
-# # Withdraw Money from Checking Account - done
-# # Withdraw Money from Savings Account - done
-# # Deposit Money into Checking Account - done
-# # Deposit Money into Savings Account - done
-# # Transfer Between Account - done
-# # Transfer To Customer's Account - not yet
-
 import csv
 from bank.bank import Bank
 
 class Account():
     def __init__(self):
         self.logged_customer = False
+        
+    def create_checking_account(self):
+        checking_account = input('⌨️  | Enter the intial checking balance: ')
+        return checking_account
 
-    def withdraw_checking(self, customer_id):
-        checking_completed = False
-        while True:
-            print('[WITHDRAW CHECKING]\n')
-            bank_customers = Bank()
-            bank_customers.retrieve_customers()
+    def create_savings_account(self):
+        savings_account = int(input('⌨️  | Enter the intial savings balance: '))
+        return savings_account
 
-            with open('bank.csv', 'r', newline='') as file:
-                reader = csv.reader(file)
-                next(reader)
-                row_index = 1
-                for row in reader:
-                    if customer_id == row[0]:
-                        if bank_customers.customers[row_index][4] != '':
-                            checking_amount = int(input('Checking Amount: '))
-                            if checking_amount > 0 and checking_amount <= 100:
-                                old_checking_balance = int(bank_customers.customers[row_index][4])
-                                bank_customers.customers[row_index][4] = str(old_checking_balance - checking_amount)
-                                bank_customers.update_customers()
-                                print(f'🔴 | The old checking balance = {old_checking_balance}\n📉 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
-                                checking_completed = True
-                                break
-                            else:
-                                print(f'Can\'t withdraw {checking_amount} from the checking account')
-                                break
-                        else:
-                            print(f'the customer with id: {customer_id} don\'t have a checking account')
-                    row_index += 1
-            if checking_completed:
-                break
-
-    def withdraw_savings(self, customer_id):
-        savings_completed = False
-        while True:
-            print('[WITHDRAW SAVINGS]\n')
-            bank_customers = Bank()
-            bank_customers.retrieve_customers()
-            
-            with open('bank.csv', 'r', newline='') as file:
-                reader = csv.reader(file)
-                next(reader)
-                row_index = 1
-                for row in reader:
-                    if customer_id == row[0]:
-                        if bank_customers.customers[row_index][5] != '':
-                            savings_amount = int(input('Savings Amount: '))
-                            if savings_amount > 0 and savings_amount <= 100:
-                                old_savings_balance = int(bank_customers.customers[row_index][5])
-                                bank_customers.customers[row_index][5] = str(old_savings_balance - savings_amount)
-                                bank_customers.update_customers()
-                                print(f'🔴 | The old savings balance = {old_savings_balance}\n📉 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
-                                savings_completed = True
-                                break
-                            else:
-                                print(f'Can\'t withdraw {savings_amount} from the savings account')
-                        else:
-                            print(f'the customer with id: {customer_id} don\'t have a savings account')
-                    row_index += 1
-            if savings_completed:
-                break
+    def withdraw_operation(self, customer_id, account_option):
+        match account_option:
+            case 1:
+                checking_completed = False
+                while True:
+                    print('\n[WITHDRAW CHECKING]')
+                    bank_customers = Bank()
+                    bank_customers.retrieve_customers()
+                    with open('bank.csv', 'r', newline='') as file:
+                        reader = csv.reader(file)
+                        next(reader)
+                        row_index = 1
+                        for row in reader:
+                            if customer_id == row[0]:
+                                if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
+                                    if bank_customers.customers[row_index][4] != '':
+                                        if int(bank_customers.customers[row_index][4]) > 0:
+                                            print(f'💲 | Your Checking Balance : {bank_customers.customers[row_index][4]}')
+                                            checking_amount = int(input('💳 | Checking Amount: '))
+                                            old_checking_balance = int(bank_customers.customers[row_index][4])
+                                            bank_customers.customers[row_index][4] = str(old_checking_balance - checking_amount)
+                                            bank_customers.update_customers()
+                                            print(f'🔴 | The old checking balance = {old_checking_balance}\n📉 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
+                                            checking_completed = True
+                                            break
+                                        else:
+                                            while True:
+                                                print(f'💲 | Your Checking Balance : {bank_customers.customers[row_index][4]}')
+                                                checking_amount = int(input('💳 | Checking Amount: '))
+                                                if checking_amount > 100:
+                                                    print(f'⚠️ | As your cehcking balance is {bank_customers.customers[row_index][4]}, you are not allowed to withdraw {checking_amount} as it above 100')
+                                                elif checking_amount <= 100 and checking_amount > 0:
+                                                    bank_customers.overdraft_protection_fee(customer_id, checking_amount)                                                            
+                                                    return
+                                                else:
+                                                    print('⚠️ | Can not withdraw zero or neigative amount')
+                                    else:
+                                        print(f'‼️  | The customer with id {customer_id} don\'t have a checking account')
+                                        account_creation = input('❓ | Do you want to create a checking account (yes/no): ').lower()
+                                        match account_creation:
+                                            case 'yes':
+                                                while True:
+                                                    checking_account = self.create_checking_account()
+                                                    if int(checking_account) >= 0:
+                                                        bank_customers.customers[row_index][4] = int(checking_account)
+                                                        bank_customers.update_customers()
+                                                        print(f'✔️  | Your checking account has been created and the balance now is {bank_customers.customers[row_index][4]}\n')
+                                                        return
+                                                    elif int(checking_account) < 0:
+                                                        print('⚠️  | Can not initiate your checking account with neigative amount\n')
+                                                    else:
+                                                        # raise ValueError
+                                                        print('⚠️  | Enter a number\n')
+                                            case 'no':
+                                                print('💰 | Your checking account still not created\n')
+                                                return
+                                else:
+                                    print(f'🔽 | The accounts assoiated with customer ID {customer_id} are DEACTIVE for now')
+                                    reactivate = input('❓ | Do you want to REACTIVATE your accounts (yes/no): ').lower()
+                                    match reactivate:
+                                        case 'yes':
+                                            while True:
+                                                print(f'💲| Your Checking Balance : {bank_customers.customers[row_index][4]}')
+                                                charge_amount = int(input('💳 | Charge Amount: '))
+                                                aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
+                                                if aprroved_balance < 0:
+                                                    print(f'This {charge_amount} can not reactivate your account')
+                                                else:
+                                                    bank_customers.activate_customer(customer_id, charge_amount)
+                                                    break
+                                        case 'no':
+                                            print('💰 | Your account remain DEACTIVE')
+                                            return
+                            row_index += 1
+                    if checking_completed:
+                        break
+                    
+            case 2:
+                savings_completed = False
+                while True:
+                    print('\n[WITHDRAW SAVINGS]')
+                    bank_customers = Bank()
+                    bank_customers.retrieve_customers()
+                    with open('bank.csv', 'r', newline='') as file:
+                        reader = csv.reader(file)
+                        next(reader)
+                        row_index = 1
+                        for row in reader:
+                            if customer_id == row[0]:
+                                if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
+                                    if bank_customers.customers[row_index][5] != '':
+                                        if int(bank_customers.customers[row_index][5]) >= 0:
+                                            print(f'💲 | Your Savings Balance : {bank_customers.customers[row_index][4]}')
+                                            savings_amount = int(input('💳 | Savings Amount: '))
+                                            old_savings_balance = int(bank_customers.customers[row_index][4])
+                                            bank_customers.customers[row_index][5] = str(old_savings_balance - savings_amount)
+                                            bank_customers.update_customers()
+                                            print(f'🔴 | The old savings balance = {old_savings_balance}\n📉 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
+                                            savings_completed = True
+                                            break
+                                        else:
+                                            while True:
+                                                savings_amount = int(input('💳 | savings Amount: '))
+                                                if savings_amount > 100:
+                                                    print(f'⚠️  | As your cehcking balance is {bank_customers.customers[row_index][5]}, you are not allowed to withdraw {savings_amount} as it above 100')
+                                                elif savings_amount <= 100 and savings_amount > 0:
+                                                    bank_customers.overdraft_protection_fee(customer_id, savings_amount)                                                            
+                                                    break
+                                                else:
+                                                    print('⚠️  | Can not withdraw zero or neigative amount')
+                                    else:
+                                        print(f'‼️  | The customer with id {customer_id} don\'t have a savings account')
+                                        account_creation = input('❓ | Do you want to create a savings account (yes/no): ').lower()
+                                        match account_creation:
+                                            case 'yes':
+                                                while True:
+                                                    savings_account = self.create_savings_account()
+                                                    if int(savings_account) >= 0:
+                                                        bank_customers.customers[row_index][5] = int(savings_account)
+                                                        bank_customers.update_customers()
+                                                        print(f'✔️  | Your savings account has been created and the balance now is {bank_customers.customers[row_index][5]}\n')
+                                                        return
+                                                    elif int(savings_account) < 0:
+                                                        print('⚠️  | Can not initiate your savings account with neigative amount\n')
+                                                    else:
+                                                        # raise ValueError
+                                                        print('⚠️  | Enter a number\n')
+                                            case 'no':
+                                                print('💰 | Your savings account still not created\n')
+                                                return
+                                else:
+                                    print(f'🔽 | The accounts assoiated with customer ID {customer_id} are DEACTIVE for now')
+                                    reactivate = input('❓ | Do you want to REACTIVATE your accounts (yes/no): ').lower()
+                                    match reactivate:
+                                        case 'yes':
+                                            while True:
+                                                print(f'💲| Your savings Balance : {bank_customers.customers[row_index][4]}')
+                                                charge_amount = int(input('💳 | Charge Amount: '))
+                                                aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
+                                                if aprroved_balance < 0:
+                                                    print(f'This {charge_amount} can not reactivate your account')
+                                                else:
+                                                    bank_customers.activate_customer(customer_id, charge_amount)
+                                                    break
+                                        case 'no':
+                                            print('💰 | Your account remain DEACTIVE')
+                                            return
+                            row_index += 1
+                    if savings_completed:
+                        break
 
 # deposit requierments:
 # # 1. the user can deposit any > 0 amount into the checking/saving accounts 
@@ -119,10 +208,17 @@ class Account():
                             reactivate = input('Do you want to activate the accounts (yes/no): ').lower()
                             match reactivate:
                                 case 'yes':
-                                    charge_amount = input('Charge amount: ')
-                                    bank_customers.activate_customer(customer_id, charge_amount)
-                                    return
+                                    while True:
+                                        charge_amount = int(input('Charge amount: '))
+                                        aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
+                                        print(aprroved_balance)
+                                        if aprroved_balance < 0:
+                                            print(f'This {charge_amount} can\'t make your balance >= 0')
+                                        else:
+                                            bank_customers.activate_customer(customer_id, charge_amount)
+                                            break
                                 case 'no':
+                                    print('Your account remain DEACTIVE')
                                     return
 
                     row_index += 1
