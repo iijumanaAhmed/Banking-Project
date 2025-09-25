@@ -1,5 +1,6 @@
 # in the .csv file, column 'active_status' is added for later usage when dealing with overdraft protection rules
 import csv, random
+import bank.account_exceptions as accountExp
 from bank.bank import Bank
 from bank.customer import Customer
 from bank.account import Account
@@ -12,48 +13,54 @@ def bank_system():
         customer_action = int(input('\n🏦 | Welcome to the Bank Management System.\n\n1) Register\n2) Login \n3) Exit\nPlease enter the number of the action you want to preform: '))
         match customer_action:
             case 1:
-                id_unique = False
-                while id_unique == False:
-                    random_id = str(random.randint(10000, 11000))
-                    with open('bank.csv', 'r', newline='') as file:
-                        reader = csv.reader(file)
-                        next(reader)
-                        for row in reader:
-                            if random_id == row[0]:
-                                id_unique = False
+                while True:
+                    try:
+                        id_unique = False
+                        while id_unique == False:
+                            random_id = str(random.randint(10000, 11000))
+                            with open('bank.csv', 'r', newline='') as file:
+                                reader = csv.reader(file)
+                                next(reader)
+                                for row in reader:
+                                    if random_id == row[0]:
+                                        id_unique = False
+                                        break
+                                    else:
+                                        id_unique = True
+                            if id_unique:
+                                customer_id = random_id
+                                print(f'New customer ID: {customer_id}')
                                 break
-                            else:
-                                id_unique = True
-                    if id_unique:
-                        customer_id = random_id
-                        print(f'New customer ID: {customer_id}')
+                        
+                        create_account = Account()
+                        customer_fname = input('First name: ')
+                        customer_lname = input('Last name: ')
+                        customer_password = input('Password: ')
+
+                        # George's comments: change to be none -> the customer has no account!!, 0 -> the account balance = 0
+                        checking_balance = None
+                        savings_balance = None
+                        customer_accounts = int(input('\n[ACCOUNTS CREATION]\n1) Checking account\n2) Savings account\n3) Checking and Savings accounts\nEnter the number of which account type would you want to create: '))
+                        match customer_accounts:
+                            case 1:
+                                checking_balance = input('⌨️  | Enter the intial checking balance: ')
+                                initial_checking_balance = create_account.create_checking_account(checking_balance)
+                                print(initial_checking_balance)
+                            case 2:
+                                savings_balance = create_account.create_savings_account()
+                            case 3:
+                                checking_balance = create_account.create_checking_account()
+                                savings_balance = create_account.create_savings_account()
+
+                        account_status = 'active'
+
+                        # Add new customer
+                        new_customer = Customer()
+                        new_customer_list = [customer_id, customer_fname, customer_lname, customer_password, initial_checking_balance, savings_balance, account_status] 
+                        new_customer.add_customer(new_customer_list)
                         break
-                
-                create_account = Account()
-                customer_fname = input('First name: ')
-                customer_lname = input('Last name: ')
-                customer_password = input('Password: ')
-
-                # George's comments: change to be none -> the customer has no account!!, 0 -> the account balance = 0
-                checking_balance = None
-                savings_balance = None
-                customer_accounts = int(input('\n[ACCOUNTS CREATION]\n1) Checking account\n2) Savings account\n3) Checking and Savings accounts\nEnter the number of which account type would you want to create: '))
-                match customer_accounts:
-                    case 1:
-                        checking_balance = create_account.create_checking_account()
-                    case 2:
-                        savings_balance = create_account.create_savings_account()
-                    case 3:
-                        checking_balance = create_account.create_checking_account()
-                        savings_balance = create_account.create_savings_account()
-
-                account_status = 'active'
-
-                # Add new customer
-                new_customer = Customer()
-                new_customer_list = [customer_id, customer_fname, customer_lname, customer_password, checking_balance, savings_balance, account_status] 
-                new_customer.add_customer(new_customer_list)
-
+                    except accountExp.AccountCreationError as e:
+                        print(f'🚩 | AccountCreationError: {e}\n')
             case 2:
                 customer_login = Customer()
                 if customer_login.login_customer() == True:
@@ -61,12 +68,14 @@ def bank_system():
                     operation = Account()
                     match account_operation:
                         case 1:
-                            withdraw_operation = int(input('\n[WITHDRAW OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\nEnter the number of which account would you like to withdraw from, or 0 to go back: '))
-                            if withdraw_operation > 0 and withdraw_operation <= 2:
-                                operation.withdraw_operation(customer_login.logged_customer_id, withdraw_operation)
-                            else:
-                                # need to be fixed [go back logic]
-                                print('enter valid operation number')                                
+                            while True:
+                                try:
+                                    operation.withdraw_operation(customer_login.logged_customer_id)   
+                                    break    
+                                except accountExp.WithdrawError as e:
+                                    print(f'🚩 | WithdrawError: {e}\n')
+                                except accountExp.AccountCreationError as e:
+                                    print(f'🚩 | AccountCreationError: {e}\n')
                         case 2:
                             deposit_operation = int(input('\n[DEPOSIT OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to deposit into: '))
                             match deposit_operation:

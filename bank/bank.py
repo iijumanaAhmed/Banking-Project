@@ -9,9 +9,10 @@ import csv
 class Bank:
     def __init__(self):
         self.customers = []
+        self.fileName = 'bank.csv'
 
     def retrieve_customers(self):
-        with open('bank.csv', 'r', newline='') as file:
+        with open(self.fileName, 'r', newline='') as file:
             reader = csv.reader(file)
             for row in reader:
                 self.customers.append(row)
