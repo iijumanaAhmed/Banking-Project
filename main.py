@@ -38,25 +38,27 @@ def bank_system():
                         customer_password = input('Password: ')
 
                         # George's comments: change to be none -> the customer has no account!!, 0 -> the account balance = 0
-                        checking_balance = None
-                        savings_balance = None
+                        initial_checking_balance = None
+                        initial_savings_balance = None
                         customer_accounts = int(input('\n[ACCOUNTS CREATION]\n1) Checking account\n2) Savings account\n3) Checking and Savings accounts\nEnter the number of which account type would you want to create: '))
                         match customer_accounts:
                             case 1:
                                 checking_balance = input('⌨️  | Enter the intial checking balance: ')
-                                initial_checking_balance = create_account.create_checking_account(checking_balance)
-                                print(initial_checking_balance)
+                                initial_checking_balance = create_account.create_account(checking_balance)
                             case 2:
-                                savings_balance = create_account.create_savings_account()
+                                savings_balance = input('⌨️  | Enter the intial savings balance: ')
+                                initial_savings_balance = create_account.create_account(savings_balance)
                             case 3:
-                                checking_balance = create_account.create_checking_account()
-                                savings_balance = create_account.create_savings_account()
-
+                                checking_balance = input('⌨️  | Enter the intial checking balance: ')
+                                initial_checking_balance = create_account.create_account(checking_balance)
+                                savings_balance = input('⌨️  | Enter the intial savings balance: ')
+                                initial_savings_balance = create_account.create_account(savings_balance)
+                        
                         account_status = 'active'
 
                         # Add new customer
                         new_customer = Customer()
-                        new_customer_list = [customer_id, customer_fname, customer_lname, customer_password, initial_checking_balance, savings_balance, account_status] 
+                        new_customer_list = [customer_id, customer_fname, customer_lname, customer_password, initial_checking_balance, initial_savings_balance, account_status] 
                         new_customer.add_customer(new_customer_list)
                         break
                     except accountExp.AccountCreationError as e:

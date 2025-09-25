@@ -6,7 +6,7 @@ class Account():
     def __init__(self):
         self.logged_customer = False
         
-    def create_checking_account(self, initial_amount):
+    def create_account(self, initial_amount):
         while True:
             try:
                 if type(int(initial_amount)) == int:
@@ -23,10 +23,6 @@ class Account():
             except accountExp.AccountCreationError as e:
                 print(f'🚩 | AccountCreationError: {e}\n')
                 return
-
-    def create_savings_account(self):
-        savings_account = int(input('⌨️  | Enter the intial savings balance: '))
-        return savings_account
 
     def withdraw_operation(self, customer_id):
         while True:
