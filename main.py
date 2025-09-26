@@ -18,11 +18,7 @@ def bank_system():
             case 1:
                 while True:
                     try:
-                        new_id = customer.generate_id(customer.customer_id)
-                        if new_id != 0:
-                            customer.customer_id = new_id
-                        else:
-                            raise customerExp.AddCustomerError('No unique id found to be assigned to the new customer')
+                        customer.customer_id = customer.generate_id(customer.customer_id)
                     
                         fname = input('First name: ')
                         if fname.isalpha():
@@ -61,10 +57,11 @@ def bank_system():
                                 print(f'🚩 | AccountCreationError: {e}')
                                 
                         # Add new customer
-                        if customer.add_customer():
-                            break
-                        else:
-                            raise customerExp.AddCustomerError('Sorry, the customer not added to the bank')
+                        new_customer_list = [customer.customer_id, customer.fname, customer.lname, customer.password, customer.checking_balance, customer.savings_balance, customer.active_status, customer.overdraft_attempt]
+                        
+                        customer.add_customer(new_customer_list)
+                            
+                        
                     except accountExp.AccountCreationError as e:
                         print(f'🚩 | AccountCreationError: {e}\n')
                         

@@ -38,20 +38,21 @@ class Customer:
                 customer_id = random_id
                 print(f'New customer ID: {customer_id}')
                 return customer_id
-            else:
-                return 0
 
-    def add_customer(self):
+    def add_customer(self, new_customer_list):
         bank_customers = Bank()
         bank_customers.retrieve_customers()
-        new_customer_list = [self.customer_id, self.fname, self.lname, self.password, self.checking_balance, self.savings_balance, self.active_status, self.overdraft_attempt] 
-        bank_customers.customers.append(new_customer_list)
+        if len(new_customer_list) == 8:
+            bank_customers.customers.append(new_customer_list)
 
-        with open(Customer.bank.file_name, 'w', newline='') as file:
-            writer = csv.writer(file)
-            for data in bank_customers.customers:
-                writer.writerow(data)
+            with open(Customer.bank.file_name, 'w', newline='') as file:
+                writer = csv.writer(file)
+                for data in bank_customers.customers:
+                    writer.writerow(data)
             return 'The customer added successfully'
+        else:
+            raise customerExp.AddCustomerError('Sorry, the customer not added to the bank')
+
     
     def login_customer(self):
         while self.logged_customer == False:
