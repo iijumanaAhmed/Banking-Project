@@ -9,10 +9,10 @@ import csv
 class Bank:
     def __init__(self):
         self.customers = []
-        self.fileName = 'bank.csv'
+        self.file_name = 'bank.csv'
 
     def retrieve_customers(self):
-        with open(self.fileName, 'r', newline='') as file:
+        with open(self.file_name, 'r', newline='') as file:
             reader = csv.reader(file)
             for row in reader:
                 self.customers.append(row)
@@ -20,7 +20,7 @@ class Bank:
         return self.customers
 
     def update_customers(self):
-        with open('bank.csv', 'w', newline='') as file:
+        with open(self.file_name, 'w', newline='') as file:
             writer = csv.writer(file)
             for data in self.customers:
                 writer.writerow(data)
@@ -31,7 +31,7 @@ class Bank:
         bank_customers = Bank()
         bank_customers.retrieve_customers()
         overdraft_fee = 35
-        with open('bank.csv', 'r', newline='') as file:
+        with open(self.file_name, 'r', newline='') as file:
             reader = csv.reader(file)
             next(reader)
             row_index = 1
@@ -58,7 +58,7 @@ class Bank:
     def activate_customer(self, customer_id, amount):
         bank_customers = Bank()
         bank_customers.retrieve_customers()
-        with open('bank.csv', 'r', newline='') as file:
+        with open(self.file_name, 'r', newline='') as file:
             reader = csv.reader(file)
             next(reader)
             row_index = 1

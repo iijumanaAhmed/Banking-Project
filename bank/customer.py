@@ -3,27 +3,59 @@
 # # customer registeration
 # # customer login
 
-import csv
+import csv, random
 from bank.bank import Bank
+import bank.customer_exceptions as customerExp
 
 class Customer:
     def __init__(self):
+        self.customer_id = 0
+        self.fname = ''
+        self.lname = ''
+        self.password = ''
+        self.checking_balance = None
+        self.savings_balance = None
+        self.active_status = 'active'
+        self.overdraft_attempt = 0
         self.logged_customer = False
         self.logged_customer_id = ''
 
-    def add_customer(self, new_customer):
+    bank = Bank()
+    def generate_id(self, customer_id):
+        id_unique = False
+        while id_unique == False:
+            random_id = str(random.randint(10000, 11000))
+            with open(Customer.bank.file_name, 'r', newline='') as file:
+                reader = csv.reader(file)
+                next(reader)
+                for row in reader:
+                    if random_id == row[0]:
+                        id_unique = False
+                        break
+                    else:
+                        id_unique = True
+            if id_unique:
+                customer_id = random_id
+                print(f'New customer ID: {customer_id}')
+                return customer_id
+            else:
+                return 0
+
+    def add_customer(self):
         bank_customers = Bank()
         bank_customers.retrieve_customers()
-        bank_customers.customers.append(new_customer)
+        new_customer_list = [self.customer_id, self.fname, self.lname, self.password, self.checking_balance, self.savings_balance, self.active_status, self.overdraft_attempt] 
+        bank_customers.customers.append(new_customer_list)
 
-        with open('bank.csv', 'w', newline='') as file:
+        with open(Customer.bank.file_name, 'w', newline='') as file:
             writer = csv.writer(file)
             for data in bank_customers.customers:
                 writer.writerow(data)
-                
+            return 'The customer added successfully'
+    
     def login_customer(self):
         while self.logged_customer == False:
-            with open('bank.csv', 'r', newline='') as file:
+            with open(Customer.bank.file_name, 'r', newline='') as file:
                 reader = csv.reader(file)
                 next(reader)
                 print('[LOGIN PAGE]\n')
