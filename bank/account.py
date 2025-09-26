@@ -24,10 +24,9 @@ class Account():
                 print(f'🚩 | AccountCreationError: {e}\n')
                 return
 
-    def withdraw_operation(self, customer_id):
+    def withdraw_operation(self, customer_id, account_option):
         while True:
             try:
-                account_option = int(input('\n[WITHDRAW OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\nEnter the number of which account would you like to withdraw from, or 0 to go back: '))
                 if account_option == 1:
                     checking_completed = False
                     while True:
@@ -68,7 +67,7 @@ class Account():
                                             match account_creation:
                                                 case 'yes':
                                                     while True:
-                                                        checking_account = self.create_checking_account()
+                                                        checking_account = self.create_account()
                                                         if checking_account >= 0:
                                                             bank_customers.customers[row_index][4] = int(checking_account)
                                                             bank_customers.update_customers()
@@ -76,8 +75,6 @@ class Account():
                                                             return
                                                         elif int(checking_account) < 0:
                                                             raise accountExp.WithdrawError('Can not initiate your checking account with neigative amount\n')
-                                                        else:
-                                                            raise ValueError
                                                 case 'no':
                                                     print('💰 | Your checking account still not created\n')
                                                     return
@@ -85,7 +82,7 @@ class Account():
                                                     if account_creation.isalpha():
                                                         raise accountExp.WithdrawError('Enter a YES or NO only')
                                                     else:
-                                                        raise ValueError
+                                                        raise ValueError('Enter a YES or NO')
                                     else:
                                         print(f'🔽 | The accounts assoiated with customer ID {customer_id} are DEACTIVE for now')
                                         reactivate = input('❓ | Do you want to REACTIVATE your accounts (yes/no): ').lower()
@@ -104,7 +101,7 @@ class Account():
                                                 print('💰 | Your account remain DEACTIVE')
                                                 return
                                             case _:
-                                                raise ValueError
+                                                raise ValueError('Enter a YES or NO')
                                 row_index += 1
                         if checking_completed:
                             break
@@ -134,14 +131,14 @@ class Account():
                                             elif int(bank_customers.customers[row_index][5]) == 0:
                                                 raise accountExp.WithdrawError(f'Can not withdraw any amount as the savings balance is {bank_customers.customers[row_index][5]}')
                                             else:
-                                                raise ValueError
+                                                raise ValueError('Enter a NUMBER operation option')
                                         else:
                                             print(f'‼️  | The customer with id {customer_id} don\'t have a savings account')
                                             account_creation = input('❓ | Do you want to create a savings account (yes/no): ').lower()
                                             match account_creation:
                                                 case 'yes':
                                                     while True:
-                                                        savings_account = self.create_savings_account()
+                                                        savings_account = self.create_account()
                                                         if int(savings_account) >= 0:
                                                             bank_customers.customers[row_index][5] = int(savings_account)
                                                             bank_customers.update_customers()
@@ -150,12 +147,12 @@ class Account():
                                                         elif int(savings_account) < 0:
                                                             raise accountExp.WithdrawError('Can not initiate your checking account with neigative amount\n')
                                                         else:
-                                                            raise ValueError
+                                                            raise ValueError('Enter a NUMBER operation option')
                                                 case 'no':
                                                     print('💰 | Your savings account still not created\n')
                                                     return
                                                 case _:
-                                                    raise ValueError
+                                                    raise ValueError('Enter a YES or NO')
                                     else:
                                         print(f'🔽 | The accounts assoiated with customer ID {customer_id} are DEACTIVE for now')
                                         reactivate = input('❓ | Do you want to REACTIVATE your accounts (yes/no): ').lower()
@@ -174,24 +171,24 @@ class Account():
                                                 print('💰 | Your account remain DEACTIVE')
                                                 return
                                             case _:
-                                                raise ValueError
+                                                raise ValueError('Enter a YES or NO')
                                 row_index += 1
                         if savings_completed:
                             break
-                else:
+                elif account_option == 0:
+                    break
+                elif not account_option.isdigit():
+                    raise ValueError('Enter a VALID operation option')
+                elif account_option.isdigit() and (int(account_option) > 2 or int(account_option) < 0):
                     raise accountExp.WithdrawError('Enter a VALID operation option')
                 break
-            except ValueError:
-                if not account_creation.isalpha():
-                    raise accountExp.WithdrawError('Enter a YES or NO')
-                elif not checking_account.isdigit():
-                    raise accountExp.WithdrawError('Enter a NUMBER operation option')
-                elif not savings_amount.isdigit():
-                    raise accountExp.WithdrawError('Enter a NUMBER operation option')
+            
+            except ValueError as v:
+                raise accountExp.WithdrawError(f'{v}')
+            
             except FileNotFoundError:
-                raise accountExp.WithdrawError(f'The file {bank_customers.fileName} Not found')
-            except accountExp.WithdrawError as e:
-                print(f'🚩 | WithdrawError: {e}\n')
+                raise accountExp.WithdrawError(f'The file {bank_customers.file_name} Not found')
+
 
 # deposit requierments:
 # # 1. the user can deposit any > 0 amount into the checking/saving accounts 

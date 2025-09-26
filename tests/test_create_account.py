@@ -16,3 +16,5 @@ class TestCreateAccount(unittest.TestCase):
             self.logged_customer.create_account(-10)
         with self.assertRaises(accountExp.AccountCreationError):
             self.logged_customer.create_account('hello')
+        with self.assertRaises(accountExp.AccountCreationError):
+            self.logged_customer.create_account(' ')

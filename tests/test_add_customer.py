@@ -1,6 +1,7 @@
 import unittest
 from bank.customer import Customer
 from bank.account import Account
+from bank.bank import Bank
 import bank.customer_exceptions as customerExp
 import bank.account_exceptions as accountExp
 
@@ -11,6 +12,8 @@ class TestAddCustomer(unittest.TestCase):
         self.wrong1_customer = Customer()
         self.wrong2_customer = Customer()
         self.account = Account()
+        self.bank_length_before = Bank()
+        self.bank_length_after = Bank()
         self.correct_customer.customer_id = self.correct_customer.generate_id(self.correct_customer.customer_id)
         self.correct_customer.fname = 'Jumana'
         self.correct_customer.lname = 'Khawaji'
@@ -32,13 +35,14 @@ class TestAddCustomer(unittest.TestCase):
     def test_add_customer(self):
         self.assertEqual(self.correct_customer.customer_id, self.correct_customer.customer_id)
         self.assertEqual(self.correct_customer.fname, 'Jumana')
+        
         self.assertEqual(self.correct_customer.lname, 'Khawaji')
         self.assertEqual(self.correct_customer.checking_balance, 100)
         self.assertEqual(self.correct_customer.savings_balance, 500)
         self.assertEqual(self.correct_customer.active_status, 'active')
         self.assertEqual(self.correct_customer.overdraft_attempt, 0)
-        self.assertEqual(self.correct_customer.add_customer(self.correct_customer_list), 'The customer added successfully')
 
+        
         with self.assertRaises(accountExp.AccountCreationError):
             self.wrong1_customer.checking_balance = self.account.create_account(-50)
         with self.assertRaises(accountExp.AccountCreationError):
@@ -49,3 +53,8 @@ class TestAddCustomer(unittest.TestCase):
             self.wrong2_customer.checking_balance = self.account.create_account('hi')
         with self.assertRaises(accountExp.AccountCreationError):
             self.wrong2_customer.savings_balance = self.account.create_account('welcome')
+
+        self.length_before = len(self.bank_length_before.retrieve_customers())
+        self.assertEqual(self.correct_customer.add_customer(self.correct_customer_list), 'The customer added successfully')
+        self.length_after = len(self.bank_length_after.retrieve_customers() + 1)
+        self.assertEqual(self.length_after, self.length_before)

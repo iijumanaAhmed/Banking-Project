@@ -70,34 +70,44 @@ def bank_system():
                         
             case 2:
                 if customer.login_customer() == True:
-                    account_operation = int(input('\n[ACCOUNTS OPERATIONS]\n1) Withdraw\n2) Deposit\n3) Transfer Between Accounts\n4) Transfer To Another Customer Account\n5) Logout\nEnter the number of which operation would you want to do, or 5 to logout: '))
-                    operation = Account()
-                    match account_operation:
-                        case 1:
-                            while True:
-                                try:
-                                    operation.withdraw_operation(customer.logged_customer_id)   
-                                    break    
-                                except accountExp.WithdrawError as e:
-                                    print(f'🚩 | WithdrawError: {e}\n')
-                                except accountExp.AccountCreationError as e:
-                                    print(f'🚩 | AccountCreationError: {e}\n')
-                        case 2:
-                            deposit_operation = int(input('\n[DEPOSIT OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to deposit into: '))
-                            match deposit_operation:
+                    while True:
+                        try:
+                            account_operation = int(input('\n[ACCOUNTS OPERATIONS]\n1) Withdraw\n2) Deposit\n3) Transfer Between Accounts\n4) Transfer To Another Customer Account\n5) Logout\nEnter the number of which operation would you want to do, or 5 to logout: '))
+                            operation = Account()
+                            match account_operation:
                                 case 1:
-                                    operation.deposit_checking(customer.logged_customer_id)
+                                    while True:
+                                        try:
+                                            account_option = input('\n[WITHDRAW OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\nEnter the number of which account would you like to withdraw from, or 0 to go back: ')
+                                            operation.withdraw_operation(customer.logged_customer_id, account_option)   
+                                            break
+
+                                        except accountExp.WithdrawError as e:
+                                            print(f'🚩 | WithdrawError: {e}\n')
+                                            
+                                        except accountExp.AccountCreationError as e:
+                                            print(f'🚩 | AccountCreationError: {e}\n')
+                                            
                                 case 2:
-                                    operation.deposit_savings(customer.logged_customer_id)
-                        case 3:
-                            transfer_to_account_operation = int(input('\n[TRANSFER BETWEEN ACCOUNTS OPERATIONS]\n1) From checking account to savings account\n2) From savings account to checking account\nEnter the number of which transfer would you like to preform: '))
-                            operation.transfer_between_accounts(customer.logged_customer_id, transfer_to_account_operation)
-                        case 4:
-                            transfer_to_customer_account_operation = int(input('\n[TRANSFER TO CUSTOMER ACCOUNT OPERATIONS]\n1) From checking account to other customer account\n2) From savings account to other customer account\nEnter the number of which transfer would you like to preform: '))
-                            operation.transfer_to_customer_account(customer.logged_customer_id, transfer_to_customer_account_operation)
-                        case 5:
-                            print('Back to the main menu')
-                        
+                                    deposit_operation = int(input('\n[DEPOSIT OPERATIONS]\n1) Checking account\n2) Savings account\nEnter the number of which account would you like to deposit into: '))
+                                    match deposit_operation:
+                                        case 1:
+                                            operation.deposit_checking(customer.logged_customer_id)
+                                        case 2:
+                                            operation.deposit_savings(customer.logged_customer_id)
+                                case 3:
+                                    transfer_to_account_operation = int(input('\n[TRANSFER BETWEEN ACCOUNTS OPERATIONS]\n1) From checking account to savings account\n2) From savings account to checking account\nEnter the number of which transfer would you like to preform: '))
+                                    operation.transfer_between_accounts(customer.logged_customer_id, transfer_to_account_operation)
+                                case 4:
+                                    transfer_to_customer_account_operation = int(input('\n[TRANSFER TO CUSTOMER ACCOUNT OPERATIONS]\n1) From checking account to other customer account\n2) From savings account to other customer account\nEnter the number of which transfer would you like to preform: '))
+                                    operation.transfer_to_customer_account(customer.logged_customer_id, transfer_to_customer_account_operation)
+                                case 5:
+                                    print('Back to the main menu')
+                        except customerExp.AddCustomerError as e:
+                            print(f'🚩 | AddCustomerError: {e}\n')
+                            
+                        except customerExp.LoginCustomerError as e:
+                            print(f'🚩 | AddCustomerError: {e}\n')
             case 3:
                 print('See you later 💵')
                 return
