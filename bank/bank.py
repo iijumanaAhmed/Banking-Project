@@ -1,10 +1,5 @@
 import csv
-
-# Bank class defs:
-# # init
-# # display of all customer accounts
-# # Transfer Money Between Accounts
-# # Overdraft Protection?
+import bank.bank_exceptions as bankExp
 
 class Bank:
     def __init__(self):
@@ -12,22 +7,31 @@ class Bank:
         self.file_name = 'bank.csv'
 
     def retrieve_customers(self):
-        with open(self.file_name, 'r', newline='') as file:
-            reader = csv.reader(file)
-            for row in reader:
-                self.customers.append(row)
-
-        return self.customers
-
+        try:
+            with open(self.file_name, 'r', newline='') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    self.customers.append(row)
+            return self.customers
+        
+        except FileNotFoundError:
+            raise bankExp.BankActionError(f'The file {self.file_name} Not found')
+        except bankExp.BankActionError as e:
+            print(f'🚩 | BankActionError: {e}')
+            
     def update_customers(self):
-        with open(self.file_name, 'w', newline='') as file:
-            writer = csv.writer(file)
-            for data in self.customers:
-                writer.writerow(data)
-
-# Build Overdraft Protection
+        try:
+            with open(self.file_name, 'w', newline='') as file:
+                writer = csv.writer(file)
+                for data in self.customers:
+                    writer.writerow(data)
+        except FileNotFoundError:
+            raise bankExp.BankActionError(f'The file {self.file_name} Not found')
+        except bankExp.BankActionError as e:
+            print(f'🚩 | BankActionError: {e}')
 
     def overdraft_protection_fee(self, customer_id, amount):
+        overdraft_fee_applied = False
         bank_customers = Bank()
         bank_customers.retrieve_customers()
         overdraft_fee = 35
@@ -43,6 +47,7 @@ class Bank:
                         bank_customers.customers[row_index][7] = str(int(bank_customers.customers[row_index][7]) + 1)
                         print(f'\n⚠️  | Based on the Overdraft Protection Rules, you are charged ${overdraft_fee} for this overdraft\nℹ️  | Number of attemtps before deactivate the account = {bank_customers.customers[row_index][7]}\n💲 | The checking account balance now is {bank_customers.customers[row_index][4]}')
                         bank_customers.update_customers()
+                        overdraft_fee_applied = True
                         break
 
                     elif int(bank_customers.customers[row_index][7]) == 1:
@@ -52,10 +57,13 @@ class Bank:
                         bank_customers.customers[row_index][7] = str(int(bank_customers.customers[row_index][7]) + 1)
                         print(f'\n⚠️  | Based on the Overdraft Protection Rules, you are charged ${overdraft_fee} for this overdraft\nℹ️  | You have reached the maximum overdraft attempts = {bank_customers.customers[row_index][7]}, and your account now is DEACTIVE\n💲 | The checking account balance now is {bank_customers.customers[row_index][4]}')
                         bank_customers.update_customers()
+                        overdraft_fee_applied = True
                         break
                 row_index += 1
+        return overdraft_fee_applied
 
     def activate_customer(self, customer_id, amount):
+        account_activated = False
         bank_customers = Bank()
         bank_customers.retrieve_customers()
         with open(self.file_name, 'r', newline='') as file:
@@ -70,5 +78,6 @@ class Bank:
                         bank_customers.customers[row_index][6] = 'active'
                         bank_customers.customers[row_index][7] = 0
                         bank_customers.update_customers()
-                        return
+                        account_activated = True
+                        return account_activated
                 row_index += 1

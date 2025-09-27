@@ -1,17 +1,22 @@
 # in the .csv file, column 'active_status' is added for later usage when dealing with overdraft protection rules
+import bank.bank_exceptions as bankExp
 import bank.account_exceptions as accountExp
 import bank.customer_exceptions as customerExp
 from bank.bank import Bank
-from bank.customer import Customer
 from bank.account import Account
+from bank.customer import Customer
 
 
 def bank_system():
     create_account = Account()
     customer = Customer()
     bank_customers = Bank()
-    bank_customers.retrieve_customers() 
-    
+    try:
+        bank_customers.retrieve_customers() 
+    except bankExp.BankActionError as e:
+        print(f'🚩 | BankActionError: {e}')
+        return
+        
     while True:            
         customer_action = int(input('\n🏦 | Welcome to the Bank Management System.\n1️⃣  Register\n2️⃣  Login \n3️⃣  Exit\nPlease enter the number of the action you want to preform: '))
         match customer_action:
