@@ -95,6 +95,8 @@ def bank_system():
                         new_customer_list = [customer.customer_id, customer.fname, customer.lname, customer.password, customer.checking_balance, customer.savings_balance, customer.active_status, customer.overdraft_attempt]
                         
                         customer.add_customer(new_customer_list)
+                        if customer.add_customer:
+                            break
                             
                     except accountExp.AccountCreationError as e:
                         print(f'🚩 | AccountCreationError: {e}\n')

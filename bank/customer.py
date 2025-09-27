@@ -17,8 +17,9 @@ class Customer:
         self.savings_balance = None
         self.active_status = 'active'
         self.overdraft_attempt = 0
+
         self.logged_customer = False
-        self.logged_customer_id = ''
+        self.added_customer = False
 
     bank = Bank()
     def generate_id(self, customer_id):
@@ -49,9 +50,13 @@ class Customer:
                 writer = csv.writer(file)
                 for data in bank_customers.customers:
                     writer.writerow(data)
-            return 'The customer added successfully'
+            print('The customer added successfully')
+            self.added_customer = True
         else:
+            self.added_customer = False
             raise customerExp.AddCustomerError('Sorry, the customer not added to the bank')
+
+        return self.added_customer
 
     
     def login_customer(self, customer_id, customer_password):
