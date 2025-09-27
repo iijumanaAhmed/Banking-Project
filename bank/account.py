@@ -239,101 +239,225 @@ class Account():
             except FileNotFoundError:
                 raise accountExp.WithdrawOperationError(f'The file {bank_customers.file_name} Not found')
 
-
-# deposit requierments:
-# # 1. the user can deposit any > 0 amount into the checking/saving accounts 
-# # 2. the user can not deposit a -ve amount into the checking/saving accounts 
-# # 3. the user need to be logged in so he/she can deposit an amount
-
-    def deposit_checking(self, customer_id):
-        checking_deposit_completed = False
-        checking_deposit = 0
+    # method holds the deposit operations on both checking and savings accounts
+    def deposit_operation(self, customer_id, account_option):
         while True:
-            print('[DEPOSIT CHECKING]\n')
-            bank_customers = Bank()
-            bank_customers.retrieve_customers()
-            
-            with open(bank_customers.file_name, 'r', newline='') as file:
-                reader = csv.reader(file)
-                next(reader)
-                row_index = 1
-                for row in reader:
-                    if customer_id == row[0]:
-                        if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
-                            if bank_customers.customers[row_index][4] != '' and int(bank_customers.customers[row_index][4]) >= 0:
-                                checking_deposit = int(input('Deposit Amount Into Checking: '))
-                                if checking_deposit > 0:
-                                    old_checking_balance = int(bank_customers.customers[row_index][4])
-                                    bank_customers.customers[row_index][4] = str(old_checking_balance + checking_deposit)
-                                    bank_customers.update_customers()
-                                    print(f'🔵 | The old checking balance = {old_checking_balance}\n📈 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
-                                    checking_deposit_completed = True
-                                    break
-                                
-                                else:
-                                    # raise error
-                                    print(f'Can\'t deposit {checking_deposit} into the checking account')
-                            
-                            elif int(bank_customers.customers[row_index][4]) < 0:
-                                bank_customers.overdraft_protection_fee(customer_id, checking_deposit)                                                            
-                                break
-                            else:
-                                print(f'the customer with id: {customer_id} don\'t have a checking account')
-                        else:
-                            print(f'the customer accounts with id: {customer_id} are deactive for now.....')
-                            reactivate = input('Do you want to activate the accounts (yes/no): ').lower()
-                            match reactivate:
-                                case 'yes':
-                                    while True:
-                                        charge_amount = int(input('Charge amount: '))
-                                        aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
-                                        print(aprroved_balance)
-                                        if aprroved_balance < 0:
-                                            print(f'This {charge_amount} can\'t make your balance >= 0')
+            try:
+                if account_option.isdigit() and (int(account_option) <= 2 and int(account_option) >= 0):
+                    if int(account_option) == 1:
+                        deposit_completed = False
+                        operation_completed = False
+                        while True:
+                            bank_customers = Bank()
+                            bank_customers.retrieve_customers()
+                            with open(bank_customers.file_name, 'r', newline='') as file:
+                                reader = csv.reader(file)
+                                next(reader)
+                                row_index = 1
+                                print('[DEPOSIT CHECKING]\n')
+                                for row in reader:
+                                    if customer_id == row[0]:
+                                        if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
+                                            if bank_customers.customers[row_index][4] != '':
+                                                while True:
+                                                    try:
+                                                        checking_deposit = input('💳 | Deposit Amount Into Checking: ')
+                                                        if type(int(checking_deposit)) == int:
+                                                            if int(checking_deposit) > 0:
+                                                                old_checking_balance = int(bank_customers.customers[row_index][4])
+                                                                bank_customers.customers[row_index][4] = old_checking_balance + int(checking_deposit)
+                                                                bank_customers.update_customers()
+                                                                print(f'🔵 | The old checking balance = {old_checking_balance}\n📈 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
+                                                                deposit_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            
+                                                            elif int(checking_deposit) <= 0:
+                                                                raise accountExp.DepositOperationError('Can not withdraw zero or neigative amount')
+                                                        else:
+                                                            raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.DepositOperationError('Please enter a positive deposit amount')
+
+                                            else:
+                                                while True:
+                                                    try:
+                                                        print(f'‼️  | The customer with id {customer_id} don\'t have a checking account')
+                                                        account_creation = input('❓ | Do you want to create a checking account (yes/no): ').lower()
+                                                        match account_creation:
+                                                            case 'yes':
+                                                                try:
+                                                                    checking_balance = input('\n⌨️  | Enter the intial checking balance: ')
+                                                                    if type(int(checking_balance)) == int:
+                                                                        if int(checking_balance) >= 0:
+                                                                            bank_customers.customers[row_index][4] = int(checking_balance)
+                                                                            bank_customers.update_customers()
+                                                                            print(f'✔️  | Your checking account has been created and the balance now is {bank_customers.customers[row_index][4]}\n')
+                                                                            deposit_completed = True
+                                                                            operation_completed = True
+                                                                            break
+                                                                        elif int(checking_balance) < 0:
+                                                                            raise accountExp.DepositOperationError('Can not initiate your checking account with neigative amount\n')
+                                                                except ValueError:
+                                                                    raise accountExp.DepositOperationError('Enter 0 or a POSITIVE NUMBER')
+                                                            case 'no':
+                                                                print('💰 | Your checking account still not created\n')
+                                                                deposit_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            case _:
+                                                                raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.DepositOperationError('Enter a YES or NO only')
+    
                                         else:
-                                            bank_customers.activate_customer(customer_id, charge_amount)
-                                            break
-                                case 'no':
-                                    print('Your account remain DEACTIVE')
-                                    return
+                                            try:
+                                                print(f'🔽 | The accounts assoiated with customer ID {customer_id} are DEACTIVE for now')
+                                                reactivate = input('❓ | Do you want to REACTIVATE your accounts (yes/no): ').lower()
+                                                match reactivate:
+                                                    case 'yes':
+                                                        print(f'\n💲 | Your Checking Balance : {bank_customers.customers[row_index][4]}')
+                                                        charge_amount = int(input('💳 | Charge Amount: '))
+                                                        aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
+                                                        if aprroved_balance < 0:
+                                                            raise accountExp.DepositOperationError(f'This {charge_amount} can not reactivate your account')
+                                                        else:
+                                                            bank_customers.activate_customer(customer_id, charge_amount)
+                                                            deposit_completed = True
+                                                            operation_completed = True
+                                                    case 'no':
+                                                        deposit_completed = True
+                                                        operation_completed = True
+                                                        raise accountExp.DepositAlert('Your account remain DEACTIVE')
+                                                        # return
+                                                    case _:
+                                                        raise ValueError
+                                            except ValueError:
+                                                raise accountExp.DepositOperationError('Enter a YES or NO only')
+                                            except accountExp.DepositAlert as e:
+                                                print(f'💰 | DepositAlert: {e}\n')
+                                    row_index += 1
+                                    if row_index == len(bank_customers.customers):
+                                        break
+                                if deposit_completed:
+                                    break
+                        if operation_completed == True:
+                            break
 
-                    row_index += 1
-                    
-            if checking_deposit_completed:
-                break
+                    if int(account_option) == 2:
+                        deposit_completed = False
+                        operation_completed = False
+                        while True:
+                            bank_customers = Bank()
+                            bank_customers.retrieve_customers()
+                            with open(bank_customers.file_name, 'r', newline='') as file:
+                                reader = csv.reader(file)
+                                next(reader)
+                                row_index = 1
+                                print('\n[DEPOSIT SAVINGS]')
+                                for row in reader:
+                                    if customer_id == row[0]:
+                                        if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
+                                            if bank_customers.customers[row_index][5] != '':
+                                                while True:
+                                                    try:
+                                                            savings_deposit = input('💳 | Deposit Amount Into Savings: ')
+                                                            if type(int(savings_deposit)) == int:
+                                                                if int(savings_deposit) > 0:
+                                                                    old_savings_balance = int(bank_customers.customers[row_index][5])
+                                                                    bank_customers.customers[row_index][5] = old_savings_balance + int(savings_deposit)
+                                                                    bank_customers.update_customers()
+                                                                    print(f'🔵 | The old savings balance = {old_savings_balance}\n📈 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
+                                                                    deposit_completed = True
+                                                                    operation_completed = True
+                                                                    break
+                                                                
+                                                                elif int(savings_deposit) <= 0:
+                                                                    raise accountExp.DepositOperationError('Can not withdraw zero or neigative amount')
+                                                            else:
+                                                                raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.DepositOperationError('Please enter a positive deposit amount')
 
-    def deposit_savings(self, customer_id):
-        savings_deposit_completed = False
-        while True:
-            print('[DEPOSIT SAVINGS]\n')
-            bank_customers = Bank()
-            bank_customers.retrieve_customers()
+                                            else:
+                                                while True:
+                                                    try:
+                                                        print(f'‼️  | The customer with id {customer_id} don\'t have a savings account')
+                                                        account_creation = input('❓ | Do you want to create a savings account (yes/no): ').lower()
+                                                        match account_creation:
+                                                            case 'yes':
+                                                                try:
+                                                                    savings_balance = input('\n⌨️  | Enter the intial savings balance: ')
+                                                                    if type(int(savings_balance)) == int:
+                                                                        if int(savings_balance) >= 0:
+                                                                            bank_customers.customers[row_index][5] = int(savings_balance)
+                                                                            bank_customers.update_customers()
+                                                                            print(f'✔️  | Your savings account has been created and the balance now is {bank_customers.customers[row_index][5]}\n')
+                                                                            deposit_completed = True
+                                                                            operation_completed = True
+                                                                            break
+                                                                        elif int(savings_balance) < 0:
+                                                                            raise accountExp.DepositOperationError('Can not initiate your savings account with neigative amount\n')
+                                                                except ValueError:
+                                                                    raise accountExp.DepositOperationError('Enter 0 or a POSITIVE NUMBER')
+                                                            case 'no':
+                                                                print('💰 | Your savings account still not created\n')
+                                                                deposit_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            case _:
+                                                                raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.DepositOperationError('Enter a YES or NO only')
+
+                                        else:
+                                            try:
+                                                print(f'🔽 | The accounts assoiated with customer ID {customer_id} are DEACTIVE for now')
+                                                reactivate = input('❓ | Do you want to REACTIVATE your accounts (yes/no): ').lower()
+                                                match reactivate:
+                                                    case 'yes':
+                                                        print(f'\n💲 | Your savings Balance : {bank_customers.customers[row_index][4]}')
+                                                        charge_amount = int(input('💳 | Charge Amount: '))
+                                                        aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
+                                                        if aprroved_balance < 0:
+                                                            raise accountExp.DepositOperationError(f'This {charge_amount} can not reactivate your account')
+                                                        else:
+                                                            bank_customers.activate_customer(customer_id, charge_amount)
+                                                            deposit_completed = True
+                                                            operation_completed = True
+                                                    case 'no':
+                                                        deposit_completed = True
+                                                        operation_completed = True
+                                                        raise accountExp.DepositAlert('Your account remain DEACTIVE')
+                                                        # return
+                                                    case _:
+                                                        raise ValueError
+                                            except ValueError:
+                                                raise accountExp.DepositOperationError('Enter a YES or NO only')
+                                            except accountExp.DepositAlert as e:
+                                                print(f'💰 | DepositAlert: {e}\n')
+                                    row_index += 1
+                                    if row_index == len(bank_customers.customers):
+                                        break
+                                if deposit_completed:
+                                    break
+                        if operation_completed == True:
+                            break
+
+                    elif int(account_option) == 0:
+                        break
+
+                elif not account_option.isdigit():
+                    raise accountExp.DepositOptionError('Enter a VALID operation option')
+                elif account_option.isdigit() and (int(account_option) > 2 or int(account_option) < 0):
+                    raise accountExp.DepositOptionError('Enter a VALID operation option')
+                break                
             
-            with open(bank_customers.file_name, 'r', newline='') as file:
-                reader = csv.reader(file)
-                next(reader)
-                row_index = 1
-                for row in reader:
-                    if customer_id == row[0]:
-                        if bank_customers.customers[row_index][5] != '':
-                            savings_deposit = int(input('Deposit Amount Into Savings: '))
-                            if savings_deposit > 0:
-                                old_savings_balance = int(bank_customers.customers[row_index][5])
-                                bank_customers.customers[row_index][5] = str(old_savings_balance + savings_deposit)
-                                bank_customers.update_customers()
-                                print(f'🔵 | The old savings balance = {old_savings_balance}\n📈 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
-                                savings_deposit_completed = True
-                                break
-                            
-                            else:
-                                # raise error
-                                print(f'Can\'t deposit {savings_deposit} into the savings account')
-                        else:
-                            print(f'the customer with id: {customer_id} don\'t have a savings account')
-                    row_index += 1
+            except accountExp.DepositOperationError as e:
+                print(f'🚩 | DepositOperationError: {e}\n')
+            except FileNotFoundError:
+                raise accountExp.DepositOperationError(f'The file {bank_customers.file_name} Not found')
 
-            if savings_deposit_completed:
-                break
 
 # transfer requierments:
 # # A. between customer's accounts 
