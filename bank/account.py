@@ -105,14 +105,16 @@ class Account():
                                                             withdraw_completed = True
                                                             operation_completed = True
                                                     case 'no':
-                                                        print('💰 | Your account remain DEACTIVE')
                                                         withdraw_completed = True
                                                         operation_completed = True
-                                                        return
+                                                        raise accountExp.WithdrawAlert('Your account remain DEACTIVE')
+                                                        # return
                                                     case _:
                                                         raise ValueError
                                             except ValueError:
                                                 raise accountExp.WithdrawOperationError('Enter a YES or NO only')
+                                            except accountExp.WithdrawAlert as e:
+                                                print(f'💰 | WithdrawAlert: {e}\n')
                                     row_index += 1
                                     if row_index == len(bank_customers.customers):
                                         break

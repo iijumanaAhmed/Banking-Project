@@ -1,45 +1,112 @@
 import unittest
+from unittest import mock
 from bank.customer import Customer
 from bank.account import Account
 from bank.bank import Bank
 import bank.customer_exceptions as customerExp
 import bank.account_exceptions as accountExp
 
-class TestAddCustomer(unittest.TestCase):
+# TEST CASES FOR customer with positive checking balance
+class TestCorrectWithdrawCheckingOperation(unittest.TestCase):
     def setUp(self):
         print('Setting Up')
-        self.correct_customer = Customer()
-        self.wrong1_customer = Customer()
-        self.wrong2_customer = Customer()
-        self.account = Account()
-        self.bank = Bank()
+        self.account1 = Account()
+        self.customer1 = Customer()
         
-        self.correct_customer.customer_id = '10002'
-        self.correct_customer.password = 'idh36%@#FGd'
+        # customer with positive checking balance
+        self.customer1.customer_id = '10002'
+        self.customer1.password = 'idh36%@#FGd'
+        
+    def tearDown(self):
+        print('Tearing down')
+        
+    #  input mock resource: https://www.youtube.com/watch?v=aoW5mpDg5Os
+    @mock.patch('builtins.input', side_effect=['100'])
+    def test_correct1_withdraw_operation(self, input):
+        self.account1.withdraw_operation(self.customer1.customer_id, '1')
+    
+    @mock.patch('builtins.input', side_effect=['-10'])
+    def test_negative1_withdraw_operation(self, input):
+        with self.assertRaises(StopIteration):
+            self.account1.withdraw_operation(self.customer1.customer_id, '1')        
 
-        self.wrong1_customer.customer_id = '1000'
-        self.wrong1_customer.password = 'idh36%@#FGd'
-        
-        self.correct_customer.customer_id = '10002'
-        self.correct_customer.password = '1234'
+    @mock.patch('builtins.input', side_effect=['hello'])
+    def test_wrong1_withdraw_operation(self, input):
+        with self.assertRaises(StopIteration):
+            self.account1.withdraw_operation(self.customer1.customer_id, '1')      
+    
+    
+# TEST CASES FOR customer with negative checking balance
+class TestErrorWithdrawCheckingOperation(unittest.TestCase):
+    def setUp(self):
+        print('Setting Up')
+        self.account2 = Account()
+        self.customer2 = Customer()
+
+        # customer with negative checking balance
+        self.customer2.customer_id = '10003'
+        self.customer2.password = 'uYWE732g4ga1'
 
     def tearDown(self):
         print('Tearing down')
         
-    def test_add_customer(self):
-        
-        with self.assertRaises(accountExp.AccountCreationError):
-            self.correct_customer.login_customer()
-        with self.assertRaises(accountExp.AccountCreationError):
-            self.wrong1_customer.savings_balance = self.account.create_account(-40)  
-        with self.assertRaises(customerExp.AddCustomerError):
-            self.wrong1_customer.add_customer(self.wrong_customer_list)
-        with self.assertRaises(accountExp.AccountCreationError):
-            self.wrong2_customer.checking_balance = self.account.create_account('hi')
-        with self.assertRaises(accountExp.AccountCreationError):
-            self.wrong2_customer.savings_balance = self.account.create_account('welcome')
+    @mock.patch('builtins.input', side_effect=['50'])
+    def test_correct2_withdraw_operation(self, input):
+        self.account2.withdraw_operation(self.customer2.customer_id, '1')
 
-        self.length_before = len(self.bank_length_before.retrieve_customers())
-        self.assertEqual(self.correct_customer.add_customer(self.correct_customer_list), 'The customer added successfully')
-        self.length_after = len(self.bank_length_after.retrieve_customers() + 1)
-        self.assertEqual(self.length_after, self.length_before)
+    @mock.patch('builtins.input', side_effect=['200'])
+    def test_over100_withdraw_operation(self, input):
+        with self.assertRaises(StopIteration):
+            self.account2.withdraw_operation(self.customer2.customer_id, '1')
+    
+    @mock.patch('builtins.input', side_effect=['-10'])
+    def test_negative2_withdraw_operation(self, input):
+        with self.assertRaises(StopIteration):
+            self.account2.withdraw_operation(self.customer2.customer_id, '1')        
+
+    @mock.patch('builtins.input', side_effect=['hello'])
+    def test_wrong2_withdraw_operation(self, input):
+        with self.assertRaises(StopIteration):
+            self.account2.withdraw_operation(self.customer2.customer_id, '1')      
+
+
+# TEST CASES FOR customer with deactive accounts
+class TestWithdrawOperationDeactive(unittest.TestCase):
+    def setUp(self):
+        print('Setting Up')
+        self.account3 = Account()
+        self.customer3 = Customer()
+        self.account4 = Account()
+        self.customer4 = Customer()
+
+        # customer with customer with deactive accounts
+        self.customer3.customer_id = '10004'
+        self.customer3.password = 'DEU8_qw3y72$'
+        self.customer4.customer_id = '10005'
+        self.customer4.password = 'd^dg23g)@'
+        
+    def tearDown(self):
+        print('Tearing down')
+    
+    @mock.patch('builtins.input', side_effect=['yes','0'])
+    def test_activate_with_zero_withdraw(self, input):
+        with self.assertRaises(StopIteration):
+            self.account3.withdraw_operation(self.customer3.customer_id, '1')
+    
+    @mock.patch('builtins.input', side_effect=['yes','50'])
+    def test_activate_with_lower_withdraw(self, input):
+        self.account3.withdraw_operation(self.customer3.customer_id, '1')
+            
+    @mock.patch('builtins.input', side_effect=['yes','120'])
+    def test_activate_with_accepted_withdraw(self, input):
+        with self.assertRaises(StopIteration):
+            self.account3.withdraw_operation(self.customer3.customer_id, '1')
+
+    @mock.patch('builtins.input', side_effect=['no'])
+    def test_no_activate_withdraw(self, input):
+        self.account4.withdraw_operation(self.customer4.customer_id, '1')
+
+    @mock.patch('builtins.input', side_effect=['Hi'])
+    def test_wrong_activate_withdraw(self, input):
+        with self.assertRaises(StopIteration):
+            self.account4.withdraw_operation(self.customer4.customer_id, '1')

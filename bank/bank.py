@@ -68,7 +68,7 @@ class Bank:
                         print(f'✔️  | Your account has been reactivated as the checking account balance now is {int(bank_customers.customers[row_index][4]) + int(amount)}')
                         bank_customers.customers[row_index][4] = str(int(bank_customers.customers[row_index][4]) + int(amount))
                         bank_customers.customers[row_index][6] = 'active'
-                        bank_customers.customers[row_index][7] = str(int(bank_customers.customers[row_index][7]) - 2)
+                        bank_customers.customers[row_index][7] = 0
                         bank_customers.update_customers()
                         return
                 row_index += 1
