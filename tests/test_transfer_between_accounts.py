@@ -18,19 +18,19 @@ class TestTransferFromCheckingOperation(unittest.TestCase):
     #  input mock resource: https://www.youtube.com/watch?v=aoW5mpDg5Os
     @mock.patch('builtins.input', side_effect=['hello', 'no', '0', 'no', '0'])
     def test_1_transfer_from_checking_operation(self, input):
-            self.account1.transfer_between_accounts(self.customer1.customer_id, '1')
+            self.account1.transfer_between_accounts_operation(self.customer1.customer_id, '1')
 
     @mock.patch('builtins.input', side_effect=['0', 'yes', '0', 'no', '0'])
     def test_2_transfer_from_checking_operation(self, input):
-        self.account1.transfer_between_accounts(self.customer1.customer_id, '1')
+        self.account1.transfer_between_accounts_operation(self.customer1.customer_id, '1')
         
     @mock.patch('builtins.input', side_effect=['10','yes', '100', 'yes', '100'])
     def test_3_transfer_from_checking_operation(self, input):
-        self.account1.transfer_between_accounts(self.customer1.customer_id, '1')
+        self.account1.transfer_between_accounts_operation(self.customer1.customer_id, '1')
 
     @mock.patch('builtins.input', side_effect=['-5', 'no', '0', 'yes', '0'])
     def test_4_transfer_from_checking_operation(self, input):
-            self.account1.transfer_between_accounts(self.customer1.customer_id, '1')
+            self.account1.transfer_between_accounts_operation(self.customer1.customer_id, '1')
 
 class TestTransferFromSavingsOperation(unittest.TestCase):
     def setUp(self):
@@ -47,16 +47,16 @@ class TestTransferFromSavingsOperation(unittest.TestCase):
     #  input mock resource: https://www.youtube.com/watch?v=aoW5mpDg5Os
     @mock.patch('builtins.input', side_effect=['0', 'no', '0', 'no', '0'])
     def test_1_transfer_from_savings_operation(self, input):
-            self.account2.transfer_between_accounts(self.customer2.customer_id, '2') 
+            self.account2.transfer_between_accounts_operation(self.customer2.customer_id, '2') 
                 
     @mock.patch('builtins.input', side_effect=['hello', 'yes', '0', 'no', '0'])
     def test_2_transfer_from_savings_operation(self, input):
-        self.account2.transfer_between_accounts(self.customer2.customer_id, '2')     
+        self.account2.transfer_between_accounts_operation(self.customer2.customer_id, '2')     
             
     @mock.patch('builtins.input', side_effect=['-5','yes', '100', 'yes', '100'])
     def test_3_transfer_from_savings_operation(self, input):
-        self.account2.transfer_between_accounts(self.customer2.customer_id, '2')        
+        self.account2.transfer_between_accounts_operation(self.customer2.customer_id, '2')        
 
     @mock.patch('builtins.input', side_effect=['10', 'no', '0', 'yes', '0'])
     def test_4_transfer_from_savings_operation(self, input):
-        self.account2.transfer_between_accounts(self.customer2.customer_id, '2')
+        self.account2.transfer_between_accounts_operation(self.customer2.customer_id, '2')

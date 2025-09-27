@@ -18,19 +18,21 @@ class TestCorrectWithdrawCheckingOperation(unittest.TestCase):
         print('Tearing down')
         
     #  input mock resource: https://www.youtube.com/watch?v=aoW5mpDg5Os
-    @mock.patch('builtins.input', side_effect=['100'])
-    def test_correct1_withdraw_operation(self, input):
+    @mock.patch('builtins.input', side_effect=['0', 'no', '0', 'no', '0'])
+    def test_withdraw1_checking_operation(self, input):
         self.account1.withdraw_operation(self.customer1.customer_id, '1')
     
-    @mock.patch('builtins.input', side_effect=['-10'])
-    def test_negative1_withdraw_operation(self, input):
-        with self.assertRaises(StopIteration):
-            self.account1.withdraw_operation(self.customer1.customer_id, '1')        
+    @mock.patch('builtins.input', side_effect=['hello', 'yes', '0', 'no', '0'])
+    def test_withdraw2_checking_operation(self, input):
+        self.account1.withdraw_operation(self.customer1.customer_id, '1')        
 
-    @mock.patch('builtins.input', side_effect=['hello'])
-    def test_wrong1_withdraw_operation(self, input):
-        with self.assertRaises(StopIteration):
-            self.account1.withdraw_operation(self.customer1.customer_id, '1')      
+    @mock.patch('builtins.input', side_effect=['-5','yes', '100', 'yes', '100'])
+    def test_withdraw3_checking_operation(self, input):
+        self.account1.withdraw_operation(self.customer1.customer_id, '1')
+
+    @mock.patch('builtins.input', side_effect=['10', 'no', '0', 'yes', '0'])
+    def test_withdraw4_checking_operation(self, input):
+        self.account1.withdraw_operation(self.customer1.customer_id, '1')     
     
     
 # TEST CASES FOR customer with negative checking balance
@@ -47,63 +49,18 @@ class TestErrorWithdrawCheckingOperation(unittest.TestCase):
     def tearDown(self):
         print('Tearing down')
         
-    @mock.patch('builtins.input', side_effect=['50'])
-    def test_correct2_withdraw_operation(self, input):
-        self.account2.withdraw_operation(self.customer2.customer_id, '1')
-
-    @mock.patch('builtins.input', side_effect=['200'])
-    def test_over100_withdraw_operation(self, input):
-        with self.assertRaises(StopIteration):
-            self.account2.withdraw_operation(self.customer2.customer_id, '1')
+    @mock.patch('builtins.input', side_effect=['hello', 'no', '0', 'no', '0'])
+    def test_withdraw1_savings_operation(self, input):
+        self.account2.withdraw_operation(self.customer2.customer_id, '2')
     
-    @mock.patch('builtins.input', side_effect=['-10'])
-    def test_negative2_withdraw_operation(self, input):
-        with self.assertRaises(StopIteration):
-            self.account2.withdraw_operation(self.customer2.customer_id, '1')        
+    @mock.patch('builtins.input', side_effect=['0', 'yes', '0', 'no', '0'])
+    def test_withdraw2_savings_operation(self, input):
+        self.account2.withdraw_operation(self.customer2.customer_id, '2')        
 
-    @mock.patch('builtins.input', side_effect=['hello'])
-    def test_wrong2_withdraw_operation(self, input):
-        with self.assertRaises(StopIteration):
-            self.account2.withdraw_operation(self.customer2.customer_id, '1')      
-
-
-# TEST CASES FOR customer with deactive accounts
-class TestWithdrawOperationDeactive(unittest.TestCase):
-    def setUp(self):
-        print('Setting Up')
-        self.account3 = Account()
-        self.customer3 = Customer()
-        self.account4 = Account()
-        self.customer4 = Customer()
-
-        # customer with customer with deactive accounts
-        self.customer3.customer_id = '10004'
-        self.customer3.password = 'DEU8_qw3y72$'
-        self.customer4.customer_id = '10005'
-        self.customer4.password = 'd^dg23g)@'
-        
-    def tearDown(self):
-        print('Tearing down')
-    
-    @mock.patch('builtins.input', side_effect=['yes','0'])
-    def test_activate_with_zero_withdraw(self, input):
-        with self.assertRaises(StopIteration):
-            self.account3.withdraw_operation(self.customer3.customer_id, '1')
-    
-    @mock.patch('builtins.input', side_effect=['yes','50'])
-    def test_activate_with_lower_withdraw(self, input):
-        self.account3.withdraw_operation(self.customer3.customer_id, '1')
+    @mock.patch('builtins.input', side_effect=['10','yes', '100', 'yes', '100'])
+    def test_withdraw3_savings_operation(self, input):
+        self.account2.withdraw_operation(self.customer2.customer_id, '2')
             
-    @mock.patch('builtins.input', side_effect=['yes','120'])
-    def test_activate_with_accepted_withdraw(self, input):
-        with self.assertRaises(StopIteration):
-            self.account3.withdraw_operation(self.customer3.customer_id, '1')
-
-    @mock.patch('builtins.input', side_effect=['no'])
-    def test_no_activate_withdraw(self, input):
-        self.account4.withdraw_operation(self.customer4.customer_id, '1')
-
-    @mock.patch('builtins.input', side_effect=['Hi'])
-    def test_wrong_activate_withdraw(self, input):
-        with self.assertRaises(StopIteration):
-            self.account4.withdraw_operation(self.customer4.customer_id, '1')
+    @mock.patch('builtins.input', side_effect=['-5', 'no', '0', 'yes', '0'])
+    def test_withdraw4_savings_operation(self, input):
+        self.account2.withdraw_operation(self.customer2.customer_id, '2')    

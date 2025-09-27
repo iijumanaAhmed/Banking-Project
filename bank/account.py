@@ -8,7 +8,8 @@ class Account():
 
     # method holds the withdraw operations on both checking and savings accounts
     def withdraw_operation(self, customer_id, account_option):
-        while True:
+        operation_completed = False
+        while operation_completed != True:
             try:
                 if account_option.isdigit() and (int(account_option) <= 2 and int(account_option) >= 0):
                     if int(account_option) == 1:
@@ -41,8 +42,10 @@ class Account():
                                                                     operation_completed = True
                                                                     break
                                                                 elif int(checking_amount) <= 0:
+                                                                    operation_completed = True
                                                                     raise accountExp.WithdrawOperationError('Can not withdraw zero or neigative amount')
                                                             else:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                         else:
                                                             if type(int(checking_amount)) == int:
@@ -52,10 +55,13 @@ class Account():
                                                                     operation_completed = True                                                            
                                                                     break
                                                                 elif int(checking_amount) > 100:
+                                                                    operation_completed = True
                                                                     raise accountExp.WithdrawOperationError(f'You tried to withdraw {checking_amount}. As your checking balance is {bank_customers.customers[row_index][4]}, you are not allowed to withdraw more than 100')
                                                                 elif int(checking_amount) <= 0:
+                                                                    operation_completed = True
                                                                     raise accountExp.WithdrawOperationError('Can not withdraw zero or neigative amount')
                                                             else:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.WithdrawOperationError('Please enter a positive withdrawal amount')
@@ -77,6 +83,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(checking_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.WithdrawOperationError('Can not initiate your checking account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.WithdrawOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -86,6 +93,7 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.WithdrawOperationError('Enter a YES or NO only')
@@ -99,6 +107,7 @@ class Account():
                                                         charge_amount = int(input('💳 | Charge Amount: '))
                                                         aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
                                                         if aprroved_balance < 0:
+                                                            operation_completed = True
                                                             raise accountExp.WithdrawOperationError(f'This {charge_amount} can not reactivate your account')
                                                         else:
                                                             bank_customers.activate_customer(customer_id, charge_amount)
@@ -109,6 +118,7 @@ class Account():
                                                         operation_completed = True
                                                         raise accountExp.WithdrawAlert('Your account remain DEACTIVE')
                                                     case _:
+                                                        operation_completed = True
                                                         raise ValueError
                                             except ValueError:
                                                 raise accountExp.WithdrawOperationError('Enter a YES or NO only')
@@ -151,14 +161,19 @@ class Account():
                                                                     operation_completed = True
                                                                     break
                                                                 elif int(savings_amount) <= 0:
+                                                                    operation_completed = True
                                                                     raise accountExp.WithdrawOperationError('Can not withdraw zero or neigative amount')
                                                             else:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                         elif (int(bank_customers.customers[row_index][5]) - int(savings_amount) < 0):
+                                                            operation_completed = True
                                                             raise accountExp.WithdrawOperationError(f'Can not withdraw amount more than the savings balance {bank_customers.customers[row_index][5]}')
                                                         elif int(bank_customers.customers[row_index][5]) == 0:
+                                                            operation_completed = True
                                                             raise accountExp.WithdrawOperationError(f'Can not withdraw any amount as the savings balance is {bank_customers.customers[row_index][5]}')
                                                         else:
+                                                            operation_completed = True
                                                             raise ValueError
                                                     except ValueError:
                                                         raise accountExp.WithdrawOperationError('Please enter a positive withdrawal amount')
@@ -180,6 +195,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(savings_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.WithdrawOperationError('Can not initiate your savings account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.WithdrawOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -189,6 +205,7 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.WithdrawOperationError('Enter a YES or NO only')
@@ -202,6 +219,7 @@ class Account():
                                                         charge_amount = int(input('💳 | Charge Amount: '))
                                                         aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
                                                         if aprroved_balance < 0:
+                                                            operation_completed = True
                                                             raise accountExp.WithdrawOperationError(f'This {charge_amount} can not reactivate your account')
                                                         else:
                                                             bank_customers.activate_customer(customer_id, charge_amount)
@@ -212,6 +230,7 @@ class Account():
                                                         operation_completed = True
                                                         raise accountExp.WithdrawAlert('Your account remain DEACTIVE')
                                                     case _:
+                                                        operation_completed = True
                                                         raise ValueError
                                             except ValueError:
                                                 raise accountExp.WithdrawOperationError('Enter a YES or NO only')
@@ -240,7 +259,8 @@ class Account():
 
     # method holds the deposit operations on both checking and savings accounts
     def deposit_operation(self, customer_id, account_option):
-        while True:
+        operation_completed = False
+        while operation_completed != True:
             try:
                 if account_option.isdigit() and (int(account_option) <= 2 and int(account_option) >= 0):
                     if int(account_option) == 1:
@@ -272,8 +292,10 @@ class Account():
                                                                 break
                                                             
                                                             elif int(checking_deposit) <= 0:
+                                                                operation_completed = True
                                                                 raise accountExp.DepositOperationError('Can not deposit zero or neigative amount')
                                                         else:
+                                                            operation_completed = True
                                                             raise ValueError
                                                     except ValueError:
                                                         raise accountExp.DepositOperationError('Please enter a positive deposit amount')
@@ -296,6 +318,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(checking_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.DepositOperationError('Can not initiate your checking account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.DepositOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -305,6 +328,7 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.DepositOperationError('Enter a YES or NO only')
@@ -319,6 +343,7 @@ class Account():
                                                         charge_amount = int(input('💳 | Charge Amount: '))
                                                         aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
                                                         if aprroved_balance < 0:
+                                                            operation_completed = True
                                                             raise accountExp.DepositOperationError(f'This {charge_amount} can not reactivate your account')
                                                         else:
                                                             bank_customers.activate_customer(customer_id, charge_amount)
@@ -329,6 +354,7 @@ class Account():
                                                         operation_completed = True
                                                         raise accountExp.DepositAlert('Your account remain DEACTIVE')
                                                     case _:
+                                                        operation_completed = True
                                                         raise ValueError
                                             except ValueError:
                                                 raise accountExp.DepositOperationError('Enter a YES or NO only')
@@ -359,21 +385,23 @@ class Account():
                                             if bank_customers.customers[row_index][5] != '':
                                                 while True:
                                                     try:
-                                                            savings_deposit = input('💳 | Deposit Amount Into Savings: ')
-                                                            if type(int(savings_deposit)) == int:
-                                                                if int(savings_deposit) > 0:
-                                                                    old_savings_balance = int(bank_customers.customers[row_index][5])
-                                                                    bank_customers.customers[row_index][5] = old_savings_balance + int(savings_deposit)
-                                                                    bank_customers.update_customers()
-                                                                    print(f'🔵 | The old savings balance = {old_savings_balance}\n📈 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
-                                                                    deposit_completed = True
-                                                                    operation_completed = True
-                                                                    break
-                                                                
-                                                                elif int(savings_deposit) <= 0:
-                                                                    raise accountExp.DepositOperationError('Can not deposit zero or neigative amount')
-                                                            else:
-                                                                raise ValueError
+                                                        savings_deposit = input('💳 | Deposit Amount Into Savings: ')
+                                                        if type(int(savings_deposit)) == int:
+                                                            if int(savings_deposit) > 0:
+                                                                old_savings_balance = int(bank_customers.customers[row_index][5])
+                                                                bank_customers.customers[row_index][5] = old_savings_balance + int(savings_deposit)
+                                                                bank_customers.update_customers()
+                                                                print(f'🔵 | The old savings balance = {old_savings_balance}\n📈 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
+                                                                deposit_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            
+                                                            elif int(savings_deposit) <= 0:
+                                                                operation_completed = True
+                                                                raise accountExp.DepositOperationError('Can not deposit zero or neigative amount')
+                                                        else:
+                                                            operation_completed = True
+                                                            raise ValueError
                                                     except ValueError:
                                                         raise accountExp.DepositOperationError('Please enter a positive deposit amount')
 
@@ -395,6 +423,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(savings_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.DepositOperationError('Can not initiate your savings account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.DepositOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -404,6 +433,7 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.DepositOperationError('Enter a YES or NO only')
@@ -418,6 +448,7 @@ class Account():
                                                         charge_amount = int(input('💳 | Charge Amount: '))
                                                         aprroved_balance = int(bank_customers.customers[row_index][4]) + charge_amount
                                                         if aprroved_balance < 0:
+                                                            operation_completed = True
                                                             raise accountExp.DepositOperationError(f'This {charge_amount} can not reactivate your account')
                                                         else:
                                                             bank_customers.activate_customer(customer_id, charge_amount)
@@ -428,6 +459,7 @@ class Account():
                                                         operation_completed = True
                                                         raise accountExp.DepositAlert('Your account remain DEACTIVE')
                                                     case _:
+                                                        operation_completed = True
                                                         raise ValueError
                                             except ValueError:
                                                 raise accountExp.DepositOperationError('Enter a YES or NO only')
