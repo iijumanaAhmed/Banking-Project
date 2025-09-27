@@ -113,13 +113,13 @@ def bank_system():
                         if customer.login_customer(login_id, login_password) == True:
                             while True:
                                 try:
-                                    account_operation = int(input('\n[ACCOUNTS OPERATIONS]\n1) Withdraw\n2) Deposit\n3) Transfer Between Accounts\n4) Transfer To Another Customer Account\n5) Logout\nEnter the number of which operation would you want to do, or 5 to logout: '))
+                                    account_operation = int(input('\n[ACCOUNTS OPERATIONS]\n1) Withdraw\n2) Deposit\n3) Transfer Between Accounts\n4) Transfer To Another Customer Account\n5) Logout\n⌨️  | Enter the number of which operation would you want to do, or 5 to logout: '))
                                     operation = Account()
                                     match account_operation:
                                         case 1:
                                             while True:
                                                 try:
-                                                    withdraw_operation = input('\n[WITHDRAW OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\nEnter the number of which account would you like to withdraw from, or 0 to go back: ')
+                                                    withdraw_operation = input('\n[WITHDRAW OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\n⌨️  | Enter the number of which account would you like to withdraw from, or 0 to go back: ')
                                                     operation.withdraw_operation(customer.logged_customer_id, withdraw_operation)
                                                     if int(withdraw_operation) == 0:
                                                         break
@@ -129,7 +129,7 @@ def bank_system():
                                         case 2:
                                             while True:
                                                 try:
-                                                    deposit_operation = input('\n[DEPOSIT OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\nEnter the number of which account would you like to deposit into, or 0 to go back: ')
+                                                    deposit_operation = input('\n[DEPOSIT OPERATIONS]\n1️⃣  Checking account\n2️⃣  Savings account\n0️⃣  Go Back\n⌨️  | Enter the number of which account would you like to deposit into, or 0 to go back: ')
                                                     operation.deposit_operation(customer.logged_customer_id, deposit_operation)
                                                     if int(deposit_operation) == 0:
                                                         break
@@ -138,17 +138,22 @@ def bank_system():
                                         case 3:
                                             while True:
                                                 try:
-                                                    transfer_to_account_operation = input('\n[TRANSFER BETWEEN ACCOUNTS OPERATIONS]\n1️⃣  From checking account to savings account\n2️⃣  From savings account to checking account\n0️⃣  Go Back\nEnter the number of which transfer would you like to preform, or 0 to go back: ')
-                                                    operation.transfer_between_accounts(customer.logged_customer_id, transfer_to_account_operation)
+                                                    transfer_to_account_operation = input('\n[TRANSFER BETWEEN ACCOUNTS OPERATIONS]\n1️⃣  From checking account to savings account\n2️⃣  From savings account to checking account\n0️⃣  Go Back\n⌨️  | Enter the number of which transfer would you like to preform, or 0 to go back: ')
+                                                    operation.transfer_between_accounts_operation(customer.logged_customer_id, transfer_to_account_operation)
                                                     if int(transfer_to_account_operation) == 0:
                                                         break
                                                 except accountExp.TransferBetweenAccountsOptionError as e:
                                                     print(f'🚩 | TransferBetweenAccountsOptionError: {e}\n')
                                         case 4:
-                                            transfer_to_customer_account_operation = int(input('\n[TRANSFER TO CUSTOMER ACCOUNT OPERATIONS]\n1) From checking account to other customer account\n2) From savings account to other customer account\nEnter the number of which transfer would you like to preform: '))
-                                            operation.transfer_to_customer_account(customer.logged_customer_id, transfer_to_customer_account_operation)
+                                            while True:
+                                                try:
+                                                    transfer_to_customer_account_operation = input('\n[TRANSFER TO CUSTOMER ACCOUNT OPERATIONS]\n1️⃣  From checking account to other customer account\n2️⃣  From savings account to other customer account\n0️⃣  Go Back\n⌨️  | Enter the number of which transfer would you like to preform: ')
+                                                    operation.transfer_to_customer_account_operation(customer.logged_customer_id, transfer_to_customer_account_operation)
+                                                    if int(transfer_to_customer_account_operation) == 0:
+                                                        break
+                                                except accountExp.TransferToCustomerAccountsOptionError as e:
+                                                    print(f'🚩 | TransferToCustomerAccountsOptionError: {e}\n')
                                         case 5:
-                                            print('Back to the main menu')
                                             break
                                 except customerExp.AddCustomerError as e:
                                     print(f'🚩 | AddCustomerError: {e}\n')

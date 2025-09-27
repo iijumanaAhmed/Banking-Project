@@ -42,3 +42,13 @@ class TransferBetweenAccountsOperationError(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
+
+class TransferToCustomerAccountsOptionError(ValueError):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+class TransferToCustomerAccountsOperationError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
