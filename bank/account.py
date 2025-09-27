@@ -108,7 +108,6 @@ class Account():
                                                         withdraw_completed = True
                                                         operation_completed = True
                                                         raise accountExp.WithdrawAlert('Your account remain DEACTIVE')
-                                                        # return
                                                     case _:
                                                         raise ValueError
                                             except ValueError:
@@ -209,15 +208,15 @@ class Account():
                                                             withdraw_completed = True
                                                             operation_completed = True
                                                     case 'no':
-                                                        print('💰 | Your account remain DEACTIVE')
                                                         withdraw_completed = True
                                                         operation_completed = True
-                                                        operation_completed = True
-                                                        return
+                                                        raise accountExp.WithdrawAlert('Your account remain DEACTIVE')
                                                     case _:
                                                         raise ValueError
                                             except ValueError:
                                                 raise accountExp.WithdrawOperationError('Enter a YES or NO only')
+                                            except accountExp.WithdrawAlert as e:
+                                                print(f'💰 | WithdrawAlert: {e}\n')
                                     row_index += 1
                                     if row_index == len(bank_customers.customers):
                                         break
@@ -254,7 +253,7 @@ class Account():
                                 reader = csv.reader(file)
                                 next(reader)
                                 row_index = 1
-                                print('[DEPOSIT CHECKING]\n')
+                                print('\n[DEPOSIT CHECKING]')
                                 for row in reader:
                                     if customer_id == row[0]:
                                         if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
@@ -273,7 +272,7 @@ class Account():
                                                                 break
                                                             
                                                             elif int(checking_deposit) <= 0:
-                                                                raise accountExp.DepositOperationError('Can not withdraw zero or neigative amount')
+                                                                raise accountExp.DepositOperationError('Can not deposit zero or neigative amount')
                                                         else:
                                                             raise ValueError
                                                     except ValueError:
@@ -329,7 +328,6 @@ class Account():
                                                         deposit_completed = True
                                                         operation_completed = True
                                                         raise accountExp.DepositAlert('Your account remain DEACTIVE')
-                                                        # return
                                                     case _:
                                                         raise ValueError
                                             except ValueError:
@@ -373,7 +371,7 @@ class Account():
                                                                     break
                                                                 
                                                                 elif int(savings_deposit) <= 0:
-                                                                    raise accountExp.DepositOperationError('Can not withdraw zero or neigative amount')
+                                                                    raise accountExp.DepositOperationError('Can not deposit zero or neigative amount')
                                                             else:
                                                                 raise ValueError
                                                     except ValueError:
@@ -429,7 +427,6 @@ class Account():
                                                         deposit_completed = True
                                                         operation_completed = True
                                                         raise accountExp.DepositAlert('Your account remain DEACTIVE')
-                                                        # return
                                                     case _:
                                                         raise ValueError
                                             except ValueError:
@@ -458,132 +455,267 @@ class Account():
             except FileNotFoundError:
                 raise accountExp.DepositOperationError(f'The file {bank_customers.file_name} Not found')
 
+    # method holds the transfer operations between checking and savings accounts of the same customer
+    def transfer_between_accounts(self, customer_id, account_option):
+        while True:
+            try:
+                if account_option.isdigit() and (int(account_option) <= 2 and int(account_option) >= 0):
+                    if int(account_option) == 1:
+                        transfer_between_accounts_completed = False
+                        while True:
+                            bank_customers = Bank()
+                            bank_customers.retrieve_customers()
+                            with open(bank_customers.file_name, 'r', newline='') as file:
+                                reader = csv.reader(file)
+                                next(reader)
+                                row_index = 1
+                                print('\n[TRANSFER FROM CHECKING TO SAVINGS]')
+                                for row in reader:
+                                    if customer_id == row[0]:
+                                        if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
+                                            if bank_customers.customers[row_index][4] != '' and bank_customers.customers[row_index][5] != '':
+                                                while True:
+                                                    try:
+                                                        if int(bank_customers.customers[row_index][4]) == 0:
+                                                            transfer_between_accounts_completed = True
+                                                            operation_completed = True
+                                                            print(f'‼️  | Can\'t transfer from checking to savings account as the checking account balance is {bank_customers.customers[row_index][4]}')
+                                                            break
+                                                        else:
+                                                            transfer_amount = input('🔁 | Transfer Amount From Checking To Savings: ')
+                                                            if int(bank_customers.customers[row_index][4]) > 0:
+                                                                if type(int(transfer_amount)) == int:
+                                                                    if int(transfer_amount) > 0 and int(transfer_amount) <= int(bank_customers.customers[row_index][4]):
+                                                                        old_checking_balance = int(bank_customers.customers[row_index][4])
+                                                                        bank_customers.customers[row_index][4] = old_checking_balance - int(transfer_amount)
+                                                                        old_savings_balance = int(bank_customers.customers[row_index][5])
+                                                                        bank_customers.customers[row_index][5] = old_savings_balance + int(transfer_amount)
+                                                                        
+                                                                        bank_customers.update_customers()
+                                                                        print(f'🔶 | The old checking balance = {old_checking_balance}\n🔷 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
+                                                                        print(f'🔶 | The old savings balance = {old_savings_balance}\n🔷 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
+                                                                        transfer_between_accounts_completed = True
+                                                                        operation_completed = True
+                                                                        break
+                                                                    elif int(transfer_amount) > 0 and int(transfer_amount) > int(bank_customers.customers[row_index][4]):
+                                                                        raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from checking to savings account as it exceed the checking account balance')
+                                                                    elif int(transfer_amount) <= 0:
+                                                                        raise accountExp.TransferBetweenAccountsOperationError('Can not transfer zero or neigative amount')
+                                                                else:
+                                                                    raise ValueError
+                                                            else:
+                                                                raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from checking to savings account as the checking account balance is {bank_customers.customers[row_index][4]}')
+                                                            
+                                                    except ValueError:
+                                                        raise accountExp.TransferBetweenAccountsOperationError('Please enter a positive transfer amount')                                                    
 
-# transfer requierments:
-# # A. between customer's accounts 
-# # # A.1. from checking to savings
-# # # # i. the user can transfer amount less than or equal to the checking_balance
-# # # # ii. the user can not transfer -ve amount
-# # # # iii. overdraft fee $35 applied when try to transfer and the checking_balance is negative
+                                            elif bank_customers.customers[row_index][4] == '':
+                                                while True:
+                                                    try:
+                                                        print(f'‼️  | The customer with id {customer_id} don\'t have a checking account')
+                                                        account_creation = input('❓ | Do you want to create a checking account (yes/no): ').lower()
+                                                        match account_creation:
+                                                            case 'yes':
+                                                                try:
+                                                                    checking_balance = input('\n⌨️  | Enter the intial checking balance: ')
+                                                                    if type(int(checking_balance)) == int:
+                                                                        if int(checking_balance) >= 0:
+                                                                            bank_customers.customers[row_index][4] = int(checking_balance)
+                                                                            bank_customers.update_customers()
+                                                                            print(f'✔️  | Your checking account has been created and the balance now is {bank_customers.customers[row_index][4]}\n')
+                                                                            transfer_between_accounts_completed = True
+                                                                            operation_completed = True
+                                                                            break
+                                                                        elif int(checking_balance) < 0:
+                                                                            raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your checking account with neigative amount\n')
+                                                                except ValueError:
+                                                                    raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
+                                                            case 'no':
+                                                                print('💰 | Your checking account still not created\n')
+                                                                transfer_between_accounts_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            case _:
+                                                                raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
 
-# # # A.2. from savings to checking
-# # # # i. the user can transfer amount less than or equal to the savings_balance
-# # # # ii. the user can not transfer -ve amount
-# # # # iii. no transfer allowed when the savings_balance = 0 **the savings_balance can not be -ve**
-    def transfer_between_accounts(self, customer_id, customer_choice):
+                                            elif bank_customers.customers[row_index][5] == '':
+                                                while True:
+                                                    try:
+                                                        print(f'‼️  | The customer with id {customer_id} don\'t have a savings account')
+                                                        account_creation = input('❓ | Do you want to create a savings account (yes/no): ').lower()
+                                                        match account_creation:
+                                                            case 'yes':
+                                                                try:
+                                                                    savings_balance = input('\n⌨️  | Enter the intial savings balance: ')
+                                                                    if type(int(savings_balance)) == int:
+                                                                        if int(savings_balance) >= 0:
+                                                                            bank_customers.customers[row_index][5] = int(savings_balance)
+                                                                            bank_customers.update_customers()
+                                                                            print(f'✔️  | Your savings account has been created and the balance now is {bank_customers.customers[row_index][5]}\n')
+                                                                            transfer_between_accounts_completed = True
+                                                                            operation_completed = True
+                                                                            break
+                                                                        elif int(savings_balance) < 0:
+                                                                            raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your savings account with neigative amount\n')
+                                                                except ValueError:
+                                                                    raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
+                                                            case 'no':
+                                                                print('💰 | Your savings account still not created\n')
+                                                                transfer_between_accounts_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            case _:
+                                                                raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
 
-        match customer_choice:
-            case 1:
-                transfer_between_accounts_completed = False
-                while True:
-                    print('[TRANSFER FROM CHECKING TO SAVINGS]\n')
-                    bank_customers = Bank()
-                    bank_customers.retrieve_customers()
-                    
-                    with open(bank_customers.file_name, 'r', newline='') as file:
-                        reader = csv.reader(file)
-                        next(reader)
-                        row_index = 1
-                        for row in reader:
-                            if customer_id == row[0]:
-                                if bank_customers.customers[row_index][4] != '' and bank_customers.customers[row_index][5] != '':
-                                    
-                                    transfer_amount = int(input('Transfer Amount From Checking To Savings: '))
-                                    if int(bank_customers.customers[row_index][4]) > 0:
-                                        
-                                        if transfer_amount > 0 and transfer_amount <= int(bank_customers.customers[row_index][4]):
-                                            old_checking_balance = int(bank_customers.customers[row_index][4])
-                                            bank_customers.customers[row_index][4] = str(old_checking_balance - transfer_amount)
-                                            old_savings_balance = int(bank_customers.customers[row_index][5])
-                                            bank_customers.customers[row_index][5] = str(old_savings_balance + transfer_amount)
-                                            
-                                            bank_customers.update_customers()
-                                            print(f'🔶 | The old checking balance = {old_checking_balance}\n🔷 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
-                                            print(f'🔶 | The old savings balance = {old_savings_balance}\n🔷 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
-                                            transfer_between_accounts_completed = True
-                                            break
-                                        
-                                        else:
-                                            # raise error
-                                            print(f'Can\'t transfer {transfer_amount} from checking to savings account as it exceed the checking account balance')
-                                            break
-                                    
-                                    else:
-                                        print(f'Can\'t transfer {transfer_amount} from checking to savings account as the account balance is {bank_customers.customers[row_index][4]}')
-                                        # apply the overdraft fee here (call the method after creation)
+                                            else:
+                                                raise accountExp.TransferBetweenAccountsOperationError(f'‼️  | The customer with id {customer_id} don\'t have both checking and savings accounts')
+
+                                    row_index += 1
+                                    if row_index == len(bank_customers.customers):
                                         break
-                                
-                                elif bank_customers.customers[row_index][4] == '':
-                                    print(f'the customer with id: {customer_id} don\'t have a checking account')
-                                    return
-                                    
-                                elif bank_customers.customers[row_index][5] == '':
-                                    print(f'the customer with id: {customer_id} don\'t have a savings account')
-                                    return
-                                    
-                                else:
-                                    print(f'the customer with id: {customer_id} don\'t have both checking and savings accounts')
-                                    return
-                            
-                            row_index += 1
+                                if transfer_between_accounts_completed:
+                                    break
+                        if operation_completed == True:
+                            break
+                        
+                    if int(account_option) == 2:
+                        transfer_between_accounts_completed = False
+                        while True:
+                            bank_customers = Bank()
+                            bank_customers.retrieve_customers()
+                            with open(bank_customers.file_name, 'r', newline='') as file:
+                                reader = csv.reader(file)
+                                next(reader)
+                                row_index = 1
+                                print('\n[TRANSFER FROM SAVINGS TO CHECKING]')
+                                for row in reader:
+                                    if customer_id == row[0]:
+                                        if bank_customers.customers[row_index][6] != 'deactive' and int(bank_customers.customers[row_index][7]) < 2:
+                                            if bank_customers.customers[row_index][4] != '' and bank_customers.customers[row_index][5] != '':
+                                                while True:
+                                                    try:
+                                                        if int(bank_customers.customers[row_index][5]) == 0:
+                                                            transfer_between_accounts_completed = True
+                                                            operation_completed = True
+                                                            print(f'‼️  | Can\'t transfer from savings to checking account as the savings account balance is {bank_customers.customers[row_index][4]}')
+                                                            break
+                                                        else:
+                                                            transfer_amount = input('🔁 | Transfer Amount From Savings To Checking: ')
+                                                            if int(bank_customers.customers[row_index][5]) > 0:
+                                                                if type(int(transfer_amount)) == int:
+                                                                    if int(transfer_amount) > 0 and int(transfer_amount) <= int(bank_customers.customers[row_index][5]):
+                                                                        old_checking_balance = int(bank_customers.customers[row_index][4])
+                                                                        bank_customers.customers[row_index][4] = old_checking_balance + int(transfer_amount)
+                                                                        old_savings_balance = int(bank_customers.customers[row_index][5])
+                                                                        bank_customers.customers[row_index][5] = old_savings_balance - int(transfer_amount)
+                                                                        
+                                                                        bank_customers.update_customers()
+                                                                        print(f'🔶 | The old savings balance = {old_savings_balance}\n🔷 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
+                                                                        print(f'🔶 | The old checking balance = {old_checking_balance}\n🔷 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
+                                                                        transfer_between_accounts_completed = True
+                                                                        operation_completed = True
+                                                                        break
+                                                                    elif int(transfer_amount) > 0 and int(transfer_amount) > int(bank_customers.customers[row_index][5]):
+                                                                        raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from savings to checking account as it exceed the savings account balance')
+                                                                    elif int(transfer_amount) <= 0:
+                                                                        raise accountExp.TransferBetweenAccountsOperationError('Can not transfer zero or neigative amount')
+                                                                else:
+                                                                    raise ValueError
+                                                            else:
+                                                                raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from savings to checking account as the savings account balance is {bank_customers.customers[row_index][5]}')
+                                                            
+                                                    except ValueError:
+                                                        raise accountExp.TransferBetweenAccountsOperationError('Please enter a positive transfer amount')                                                    
 
-                    if transfer_between_accounts_completed:
+                                            elif bank_customers.customers[row_index][4] == '':
+                                                while True:
+                                                    try:
+                                                        print(f'‼️  | The customer with id {customer_id} don\'t have a checking account')
+                                                        account_creation = input('❓ | Do you want to create a checking account (yes/no): ').lower()
+                                                        match account_creation:
+                                                            case 'yes':
+                                                                try:
+                                                                    checking_balance = input('\n⌨️  | Enter the intial checking balance: ')
+                                                                    if type(int(checking_balance)) == int:
+                                                                        if int(checking_balance) >= 0:
+                                                                            bank_customers.customers[row_index][4] = int(checking_balance)
+                                                                            bank_customers.update_customers()
+                                                                            print(f'✔️  | Your checking account has been created and the balance now is {bank_customers.customers[row_index][4]}\n')
+                                                                            transfer_between_accounts_completed = True
+                                                                            operation_completed = True
+                                                                            break
+                                                                        elif int(checking_balance) < 0:
+                                                                            raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your checking account with neigative amount\n')
+                                                                except ValueError:
+                                                                    raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
+                                                            case 'no':
+                                                                print('💰 | Your checking account still not created\n')
+                                                                transfer_between_accounts_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            case _:
+                                                                raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
+
+                                            elif bank_customers.customers[row_index][5] == '':
+                                                while True:
+                                                    try:
+                                                        print(f'‼️  | The customer with id {customer_id} don\'t have a savings account')
+                                                        account_creation = input('❓ | Do you want to create a savings account (yes/no): ').lower()
+                                                        match account_creation:
+                                                            case 'yes':
+                                                                try:
+                                                                    savings_balance = input('\n⌨️  | Enter the intial savings balance: ')
+                                                                    if type(int(savings_balance)) == int:
+                                                                        if int(savings_balance) >= 0:
+                                                                            bank_customers.customers[row_index][5] = int(savings_balance)
+                                                                            bank_customers.update_customers()
+                                                                            print(f'✔️  | Your savings account has been created and the balance now is {bank_customers.customers[row_index][5]}\n')
+                                                                            transfer_between_accounts_completed = True
+                                                                            operation_completed = True
+                                                                            break
+                                                                        elif int(savings_balance) < 0:
+                                                                            raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your savings account with neigative amount\n')
+                                                                except ValueError:
+                                                                    raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
+                                                            case 'no':
+                                                                print('💰 | Your savings account still not created\n')
+                                                                transfer_between_accounts_completed = True
+                                                                operation_completed = True
+                                                                break
+                                                            case _:
+                                                                raise ValueError
+                                                    except ValueError:
+                                                        raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
+
+                                            else:
+                                                raise accountExp.TransferBetweenAccountsOperationError(f'‼️  | The customer with id {customer_id} don\'t have both checking and savings accounts')
+
+                                    row_index += 1
+                                    if row_index == len(bank_customers.customers):
+                                        break
+                                if transfer_between_accounts_completed:
+                                    break
+                        if operation_completed == True:
+                            break
+                    elif int(account_option) == 0:
                         break
-            case 2:
-                transfer_between_accounts_completed = False
-                while True:
-                    print('[TRANSFER FROM SAVINGS TO CHECKING]\n')
-                    bank_customers = Bank()
-                    bank_customers.retrieve_customers()
-                    
-                    with open(bank_customers.file_name, 'r', newline='') as file:
-                        reader = csv.reader(file)
-                        next(reader)
-                        row_index = 1
-                        for row in reader:
-                            if customer_id == row[0]:
-                                if bank_customers.customers[row_index][4] != '' and bank_customers.customers[row_index][5] != '':
-                                    
-                                    transfer_amount = int(input('Transfer Amount From Savings To Checking: '))
-                                    if int(bank_customers.customers[row_index][5]) > 0:
-                                        
-                                        if transfer_amount > 0 and transfer_amount <= int(bank_customers.customers[row_index][5]):
-                                            old_checking_balance = int(bank_customers.customers[row_index][4])
-                                            bank_customers.customers[row_index][4] = str(old_checking_balance + transfer_amount)
-                                            old_savings_balance = int(bank_customers.customers[row_index][5])
-                                            bank_customers.customers[row_index][5] = str(old_savings_balance - transfer_amount)
-                                            
-                                            bank_customers.update_customers()
-                                            print(f'🔶 | The old savings balance = {old_savings_balance}\n🔷 | The new savings balance = {bank_customers.customers[row_index][5]}\n')
-                                            print(f'🔶 | The old checking balance = {old_checking_balance}\n🔷 | The new checking balance = {bank_customers.customers[row_index][4]}\n')
-                                            transfer_between_accounts_completed = True
-                                            break
-                                        
-                                        else:
-                                            # raise error
-                                            print(f'Can\'t transfer {transfer_amount} from savings to checking account as it exceed the savings account balance')
-                                            break
-                                    
-                                    else:
-                                        print(f'Can\'t transfer {transfer_amount} from savings to checking account as the account balance is {bank_customers.customers[row_index][5]}')
-                                        break
-                                
-                                elif bank_customers.customers[row_index][4] == '':
-                                    print(f'the customer with id: {customer_id} don\'t have a checking account')
-                                    return
-                                    
-                                elif bank_customers.customers[row_index][5] == '':
-                                    print(f'the customer with id: {customer_id} don\'t have a savings account')
-                                    return
-                                    
-                                else:
-                                    print(f'the customer with id: {customer_id} don\'t have both checking and savings accounts')
-                                    return
-                            
-                            row_index += 1
 
-                    if transfer_between_accounts_completed:
-                        break       
+                elif not account_option.isdigit():
+                    raise accountExp.TransferBetweenAccountsOptionError('Enter a VALID operation option')
+                elif account_option.isdigit() and (int(account_option) > 2 or int(account_option) < 0):
+                    raise accountExp.TransferBetweenAccountsOptionError('Enter a VALID operation option')
+                break                
+            
+            except accountExp.TransferBetweenAccountsOperationError as e:
+                print(f'🚩 | TransferBetweenAccountsOperationError: {e}\n')
+            except FileNotFoundError:
+                raise accountExp.TransferBetweenAccountsOperationError(f'The file {bank_customers.file_name} Not found')
 
 # # B. the user can not deposit a -ve amount into the checking/saving accounts 
 # # # B.1. from checking to another account

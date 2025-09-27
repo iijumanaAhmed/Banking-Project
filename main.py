@@ -136,8 +136,14 @@ def bank_system():
                                                 except accountExp.DepositOptionError as e:
                                                     print(f'🚩 | DepositOptionError: {e}\n')
                                         case 3:
-                                            transfer_to_account_operation = int(input('\n[TRANSFER BETWEEN ACCOUNTS OPERATIONS]\n1) From checking account to savings account\n2) From savings account to checking account\nEnter the number of which transfer would you like to preform: '))
-                                            operation.transfer_between_accounts(customer.logged_customer_id, transfer_to_account_operation)
+                                            while True:
+                                                try:
+                                                    transfer_to_account_operation = input('\n[TRANSFER BETWEEN ACCOUNTS OPERATIONS]\n1️⃣  From checking account to savings account\n2️⃣  From savings account to checking account\n0️⃣  Go Back\nEnter the number of which transfer would you like to preform, or 0 to go back: ')
+                                                    operation.transfer_between_accounts(customer.logged_customer_id, transfer_to_account_operation)
+                                                    if int(transfer_to_account_operation) == 0:
+                                                        break
+                                                except accountExp.TransferBetweenAccountsOptionError as e:
+                                                    print(f'🚩 | TransferBetweenAccountsOptionError: {e}\n')
                                         case 4:
                                             transfer_to_customer_account_operation = int(input('\n[TRANSFER TO CUSTOMER ACCOUNT OPERATIONS]\n1) From checking account to other customer account\n2) From savings account to other customer account\nEnter the number of which transfer would you like to preform: '))
                                             operation.transfer_to_customer_account(customer.logged_customer_id, transfer_to_customer_account_operation)
