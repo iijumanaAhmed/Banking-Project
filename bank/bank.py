@@ -39,7 +39,7 @@ class Bank:
                 if customer_id == row[0]:
                     if int(bank_customers.customers[row_index][7]) == 0:
                         print(f'⚠️  | You tried to overdraft an amount {amount} while your checking account balance is {bank_customers.customers[row_index][4]}')
-                        bank_customers.customers[row_index][4] = str(int(bank_customers.customers[row_index][4]) - amount - overdraft_fee)
+                        bank_customers.customers[row_index][4] = int(bank_customers.customers[row_index][4]) - int(amount) - overdraft_fee
                         bank_customers.customers[row_index][7] = str(int(bank_customers.customers[row_index][7]) + 1)
                         print(f'\n⚠️  | Based on the Overdraft Protection Rules, you are charged ${overdraft_fee} for this overdraft\nℹ️  | Number of attemtps before deactivate the account = {bank_customers.customers[row_index][7]}\n💲 | The checking account balance now is {bank_customers.customers[row_index][4]}')
                         bank_customers.update_customers()
@@ -47,7 +47,7 @@ class Bank:
 
                     elif int(bank_customers.customers[row_index][7]) == 1:
                         print(f'⚠️  | You tried to overdraft an amount {amount} while your checking account balance is {bank_customers.customers[row_index][4]}')
-                        bank_customers.customers[row_index][4] = str(int(bank_customers.customers[row_index][4]) - amount - overdraft_fee)
+                        bank_customers.customers[row_index][4] = int(bank_customers.customers[row_index][4]) - int(amount) - overdraft_fee
                         bank_customers.customers[row_index][6] = 'deactive'
                         bank_customers.customers[row_index][7] = str(int(bank_customers.customers[row_index][7]) + 1)
                         print(f'\n⚠️  | Based on the Overdraft Protection Rules, you are charged ${overdraft_fee} for this overdraft\nℹ️  | You have reached the maximum overdraft attempts = {bank_customers.customers[row_index][7]}, and your account now is DEACTIVE\n💲 | The checking account balance now is {bank_customers.customers[row_index][4]}')
@@ -65,7 +65,7 @@ class Bank:
             for row in reader:
                 if customer_id == row[0]:
                     if int(bank_customers.customers[row_index][7]) == 2 and int(bank_customers.customers[row_index][4]) < 0:
-                        print(f'✔️ | Your account has been reactivated as the checking account balance is {int(bank_customers.customers[row_index][4]) + int(amount)}')
+                        print(f'✔️  | Your account has been reactivated as the checking account balance now is {int(bank_customers.customers[row_index][4]) + int(amount)}')
                         bank_customers.customers[row_index][4] = str(int(bank_customers.customers[row_index][4]) + int(amount))
                         bank_customers.customers[row_index][6] = 'active'
                         bank_customers.customers[row_index][7] = str(int(bank_customers.customers[row_index][7]) - 2)

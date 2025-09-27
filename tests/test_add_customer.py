@@ -33,15 +33,12 @@ class TestAddCustomer(unittest.TestCase):
         print('Tearing down')
         
     def test_add_customer(self):
-        self.assertEqual(self.correct_customer.customer_id, self.correct_customer.customer_id)
-        self.assertEqual(self.correct_customer.fname, 'Jumana')
-        
+        self.assertEqual(self.correct_customer.fname, 'Jumana')        
         self.assertEqual(self.correct_customer.lname, 'Khawaji')
         self.assertEqual(self.correct_customer.checking_balance, 100)
         self.assertEqual(self.correct_customer.savings_balance, 500)
         self.assertEqual(self.correct_customer.active_status, 'active')
         self.assertEqual(self.correct_customer.overdraft_attempt, 0)
-
         
         with self.assertRaises(accountExp.AccountCreationError):
             self.wrong1_customer.checking_balance = self.account.create_account(-50)

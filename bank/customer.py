@@ -54,25 +54,22 @@ class Customer:
             raise customerExp.AddCustomerError('Sorry, the customer not added to the bank')
 
     
-    def login_customer(self):
+    def login_customer(self, customer_id, customer_password):
         while self.logged_customer == False:
             with open(Customer.bank.file_name, 'r', newline='') as file:
                 reader = csv.reader(file)
                 next(reader)
-                print('[LOGIN PAGE]\n')
-                login_id = input('Customer ID: ')
-                login_password = input('Customer Password: ')
                 for row in reader:
-                    if login_id == row[0] and login_password == row[3]:
+                    if customer_id == row[0] and customer_password == row[3]:
                         self.logged_customer = True
                         break
 
-                    elif login_id != row[0] or login_password != row[3]:
+                    elif customer_id != row[0] or customer_password != row[3]:
                         self.logged_customer = False
 
             if self.logged_customer:
                 print(f'Logged in successfully!! Welcome, {row[1]} {row[2]}')
-                self.logged_customer_id = login_id
+                self.logged_customer_id = customer_id
                 return self.logged_customer
             else:
-                print(f'The customer with {login_id} does not exsit in the system!, Try again\n')
+                return self.logged_customer
