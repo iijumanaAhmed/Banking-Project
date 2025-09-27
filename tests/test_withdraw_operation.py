@@ -2,9 +2,6 @@ import unittest
 from unittest import mock
 from bank.customer import Customer
 from bank.account import Account
-from bank.bank import Bank
-import bank.customer_exceptions as customerExp
-import bank.account_exceptions as accountExp
 
 # TEST CASES FOR customer with positive checking balance
 class TestCorrectWithdrawCheckingOperation(unittest.TestCase):

@@ -3,7 +3,6 @@ from bank.customer import Customer
 from bank.account import Account
 from bank.bank import Bank
 import bank.customer_exceptions as customerExp
-import bank.account_exceptions as accountExp
 
 class TestAddCustomer(unittest.TestCase):
     def setUp(self):

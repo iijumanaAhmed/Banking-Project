@@ -457,7 +457,8 @@ class Account():
 
     # method holds the transfer operations between checking and savings accounts of the same customer
     def transfer_between_accounts(self, customer_id, account_option):
-        while True:
+        operation_completed = False
+        while operation_completed != True:
             try:
                 if account_option.isdigit() and (int(account_option) <= 2 and int(account_option) >= 0):
                     if int(account_option) == 1:
@@ -498,12 +499,16 @@ class Account():
                                                                         operation_completed = True
                                                                         break
                                                                     elif int(transfer_amount) > 0 and int(transfer_amount) > int(bank_customers.customers[row_index][4]):
+                                                                        operation_completed = True
                                                                         raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from checking to savings account as it exceed the checking account balance')
                                                                     elif int(transfer_amount) <= 0:
+                                                                        operation_completed = True
                                                                         raise accountExp.TransferBetweenAccountsOperationError('Can not transfer zero or neigative amount')
                                                                 else:
+                                                                    operation_completed = True
                                                                     raise ValueError
                                                             else:
+                                                                operation_completed = True
                                                                 raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from checking to savings account as the checking account balance is {bank_customers.customers[row_index][4]}')
                                                             
                                                     except ValueError:
@@ -527,6 +532,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(checking_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your checking account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -536,6 +542,7 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
@@ -558,6 +565,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(savings_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your savings account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -567,11 +575,13 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
 
                                             else:
+                                                operation_completed = True
                                                 raise accountExp.TransferBetweenAccountsOperationError(f'‼️  | The customer with id {customer_id} don\'t have both checking and savings accounts')
 
                                     row_index += 1
@@ -620,12 +630,16 @@ class Account():
                                                                         operation_completed = True
                                                                         break
                                                                     elif int(transfer_amount) > 0 and int(transfer_amount) > int(bank_customers.customers[row_index][5]):
+                                                                        operation_completed = True
                                                                         raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from savings to checking account as it exceed the savings account balance')
                                                                     elif int(transfer_amount) <= 0:
+                                                                        operation_completed = True
                                                                         raise accountExp.TransferBetweenAccountsOperationError('Can not transfer zero or neigative amount')
                                                                 else:
+                                                                    operation_completed = True
                                                                     raise ValueError
                                                             else:
+                                                                operation_completed = True
                                                                 raise accountExp.TransferBetweenAccountsOperationError(f'Can\'t transfer {transfer_amount} from savings to checking account as the savings account balance is {bank_customers.customers[row_index][5]}')
                                                             
                                                     except ValueError:
@@ -649,6 +663,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(checking_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your checking account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -658,6 +673,7 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
@@ -680,6 +696,7 @@ class Account():
                                                                             operation_completed = True
                                                                             break
                                                                         elif int(savings_balance) < 0:
+                                                                            operation_completed = True
                                                                             raise accountExp.TransferBetweenAccountsOperationError('Can not initiate your savings account with neigative amount\n')
                                                                 except ValueError:
                                                                     raise accountExp.TransferBetweenAccountsOperationError('Enter 0 or a POSITIVE NUMBER')
@@ -689,11 +706,13 @@ class Account():
                                                                 operation_completed = True
                                                                 break
                                                             case _:
+                                                                operation_completed = True
                                                                 raise ValueError
                                                     except ValueError:
                                                         raise accountExp.TransferBetweenAccountsOperationError('Enter a YES or NO only')
 
                                             else:
+                                                operation_completed = True
                                                 raise accountExp.TransferBetweenAccountsOperationError(f'‼️  | The customer with id {customer_id} don\'t have both checking and savings accounts')
 
                                     row_index += 1
