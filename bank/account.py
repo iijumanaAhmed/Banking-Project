@@ -761,6 +761,7 @@ class Account():
                                                     other_customer_row_index = 0
                                                     other_customer_found = False
                                                     if other_customer_id == customer_id:
+                                                        operation_completed = True
                                                         raise accountExp.TransferToCustomerAccountsOperationError(f'The customer with id: {other_customer_id} is the current customer')
 
                                                     else:
@@ -849,7 +850,9 @@ class Account():
                                                                 raise accountExp.TransferToCustomerAccountsOperationError(f'The customer with id {other_customer_id} don\'t have checking account')
 
                                                         else:
+                                                            operation_completed = True
                                                             raise accountExp.TransferToCustomerAccountsOperationError(f'The customer with id {other_customer_id} doesn\'t exist')
+                                                        
                                                 except ValueError:
                                                     raise accountExp.TransferToCustomerAccountsOperationError('Please enter a positive transfer amount')                                                    
                                     row_index += 1
@@ -879,6 +882,7 @@ class Account():
                                                     other_customer_row_index = 0
                                                     other_customer_found = False
                                                     if other_customer_id == customer_id:
+                                                        operation_completed = True
                                                         raise accountExp.TransferToCustomerAccountsOperationError(f'The customer with id: {other_customer_id} is the current customer')
 
                                                     else:
@@ -967,6 +971,7 @@ class Account():
                                                                 raise accountExp.TransferToCustomerAccountsOperationError(f'The customer with id {other_customer_id} don\'t have checking account')
 
                                                         else:
+                                                            operation_completed = True
                                                             raise accountExp.TransferToCustomerAccountsOperationError(f'The customer with id {other_customer_id} doesn\'t exist')
                                                 except ValueError:
                                                     raise accountExp.TransferToCustomerAccountsOperationError('Please enter a positive transfer amount')
