@@ -38,7 +38,7 @@ The application demonstrates the transaction that can be done by the customer su
 * Account reactivation throught deposit the charged amount.
 
 ## 💻 Code Blocks
-### 💰 Initate checking or savings account:
+### 💰 Initate Checking or Savings Account:
 `account.py`
 ```
 try:
@@ -73,7 +73,7 @@ except ValueError:
     raise accountExp.DepositOperationError('Enter a YES or NO only')
 ```
 
-### ⚠️ Account Deactivation after 2 over draft attempts prompt:
+### ⚠️ Account-Deactivation After 2 Overdraft Attempts:
 `bank.py`
 ```
 def overdraft_protection_fee(self, customer_id, amount):
@@ -109,7 +109,7 @@ def overdraft_protection_fee(self, customer_id, amount):
     return overdraft_fee_applied
 ```
 
-### ☑️ Account Reactivation prompt:
+### ☑️ Account-Reactivation:
 `bank.py`
 ```
     def activate_customer(self, customer_id, amount):
