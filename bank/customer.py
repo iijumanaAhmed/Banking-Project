@@ -50,7 +50,7 @@ class Customer:
                 writer = csv.writer(file)
                 for data in bank_customers.customers:
                     writer.writerow(data)
-            print('The customer added successfully')
+            print('✔️  | The customer added successfully')
             self.added_customer = True
         else:
             self.added_customer = False
