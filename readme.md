@@ -1,5 +1,5 @@
 # 🏦 Bank Management System
-A **Python-based** application designed with a focus on Object-Oriented Programming (OOP) and Test-Driven Development (TDD). It simulate the bank managemnet system core operations including create account, withdraw, deposit, and transfer.
+A **Python-based** application designed with a focus on Object-Oriented Programming (OOP) and Test-Driven Development (TDD). It simulate the bank management system core operations including create account, withdraw, deposit, and transfer.
 
 ## 💳 Description
 The application demonstrates the transaction that can be done by the customer such as withdraw money, deposit money, or transfer money between customer's account or from customer to another. A `bank.csv` file used in this application to simulate the real data storing and muniplation. The application implements the design of OOP by including 3 classes (plus testing classes) and structured based on the Test-Driven Development (TDD) principles as shown below:
