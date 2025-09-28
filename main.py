@@ -51,18 +51,19 @@ def bank_system():
                                                 if type(int(checking_balance)) == int:
                                                     if int(checking_balance) >= 0:
                                                         customer.checking_balance = int(checking_balance)
+                                                        customer.savings_balance = None
                                                     elif int(checking_balance) < 0:
                                                         raise accountExp.AccountCreationError('Can not initiate your checking account with neigative amount\n')
                                             except ValueError:
                                                 raise accountExp.AccountCreationError('Enter 0 or a POSITIVE NUMBER')
                                             
                                         case '2':
-                                            savings_balance = input('⌨️  | Enter the intial savings balance: ')
                                             try:
                                                 savings_balance = input('\n⌨️  | Enter the intial savings balance: ')
                                                 if type(int(savings_balance)) == int:
                                                     if int(savings_balance) >= 0:
                                                         customer.savings_balance = int(savings_balance)
+                                                        customer.checking_balance = None
                                                     elif int(savings_balance) < 0:
                                                         raise accountExp.AccountCreationError('Can not initiate your savings account with neigative amount\n')
                                             except ValueError:
@@ -74,13 +75,11 @@ def bank_system():
                                                 if type(int(checking_balance)) == int:
                                                     if int(checking_balance) >= 0:
                                                         customer.checking_balance = int(checking_balance)
-                                                        bank_customers.update_customers()
                                                     elif int(checking_balance) < 0:
                                                         raise accountExp.AccountCreationError('Can not initiate your checking account with neigative amount\n')
                                             except ValueError:
                                                 raise accountExp.AccountCreationError('Enter 0 or a POSITIVE NUMBER')
                                             
-                                            savings_balance = input('⌨️  | Enter the intial savings balance: ')
                                             try:
                                                 savings_balance = input('\n⌨️  | Enter the intial savings balance: ')
                                                 if type(int(savings_balance)) == int:
